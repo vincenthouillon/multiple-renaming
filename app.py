@@ -4,8 +4,8 @@
 from tkinter import *
 from tkinter import ttk
 
-from treeview import Treeview
-from notebook import Notebook
+from widgets.treeview import Treeview
+from widgets.notebook import Notebook
 
 
 class MultipleRenaming:
@@ -16,7 +16,7 @@ class MultipleRenaming:
 
     def configure(self):
         self.master.title("Renommage Multiple")
-        self.master.minsize(600, 400)
+        self.master.minsize(600, 420)
 
         menu = Menu(self.master)
         self.master.config(menu=menu)

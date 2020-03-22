@@ -3,30 +3,30 @@ from tkinter import ttk
 
 class Notebook:
     def __init__(self, *args):
-        print("Notebook")
+        """ Display Notebook section. """
         self.frame = Frame(*args)
 
-        self.notebk = ttk.Notebook(self.frame, padding=(0,10))
+        self.notebk = ttk.Notebook(self.frame, padding=(0,10,0,0))
         self.settings = ttk.Frame(self.notebk)
         self.profils = ttk.Frame(self.notebk)
         self.notebk.add(self.settings, text="Paramétres")
         self.notebk.add(self.profils, text="Profils")
 
         # SETTINGS CONTENT
-        self.labelframe = ttk.LabelFrame(self.settings, text="Méthode")
-        self.labelframe.pack(fill=BOTH, pady=10)
+        self.labelframe = ttk.LabelFrame(self.settings, text="Méthode", padding=(0,10))
+        self.labelframe.pack(fill=BOTH, pady=10, padx=10)
 
         self.row01 = ttk.Frame(self.labelframe)
-        self.row01.pack(anchor=W)
+        self.row01.pack(anchor=W, fill=X)
 
         self.col01 = ttk.Frame(self.row01)
-        self.col01.pack(side=LEFT)
+        self.col01.pack(side=LEFT, expand=True, fill=X)
 
         self.lbl_filename = ttk.Label(self.col01, text="Nom de fichier :")
-        self.lbl_filename.pack(anchor=W, padx=5)
+        self.lbl_filename.pack(anchor=W, padx=5, fill=X, expand=True)
         
-        self.entry_filename = ttk.Entry(self.col01, width=60)
-        self.entry_filename.pack(anchor=W, side=LEFT, padx=5)
+        self.entry_filename = ttk.Entry(self.col01)
+        self.entry_filename.pack(anchor=W, side=LEFT, padx=5, fill=X, expand=True)
 
         self.col02 = ttk.Frame(self.row01)
         self.col02.pack(side=LEFT)
@@ -52,4 +52,4 @@ class Notebook:
 
         self.notebk.pack(fill=BOTH, side=TOP)
 
-        self.frame.pack(fill=BOTH, side=TOP)
+        self.frame.pack(fill=BOTH, side=BOTTOM)
