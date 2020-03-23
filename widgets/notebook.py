@@ -29,32 +29,21 @@ class Notebook:
         self.method_row_01 = ttk.Frame(self.method_labelframe)
         self.method_row_01.pack(anchor=W, fill=X)
 
-        self.method_col_01 = ttk.Frame(self.method_row_01)
-        self.method_col_01.pack(side=LEFT, expand=True, fill=X)
-
-        self.lbl_filename = ttk.Label(self.method_col_01, text="Nom de fichier :")
+        self.lbl_filename = ttk.Label(
+            self.method_row_01, text="Nom de fichier :")
         self.lbl_filename.pack(anchor=W, padx=5, fill=X, expand=True)
-        self.entry_filename = ttk.Entry(self.method_col_01)
+        self.entry_filename = ttk.Entry(self.method_row_01)
         self.entry_filename.pack(
             anchor=W, side=LEFT, padx=5, fill=X, expand=True)
 
-        self.mb = ttk.Menubutton(self.method_col_01, text="⚙️")
+        self.mb = ttk.Menubutton(self.method_row_01, text="⚙️")
         self.mb.pack()
         self.mb.menu = Menu(self.mb, tearoff=False)
         self.mb["menu"] = self.mb.menu
 
         for key, value in OPTIONS_LIST.items():
-            self.mb.menu.add_command(label=key, command=getattr(self, value[0]), accelerator=value[1])
-            
-
-        self.col02 = ttk.Frame(self.method_row_01)
-        self.col02.pack(side=LEFT)
-
-        self.lbl_extension = ttk.Label(
-            self.col02, text="Extension de fichier :")
-        self.lbl_extension.pack(anchor=W, padx=5)
-        self.entry_extension = ttk.Entry(self.col02, width=20)
-        self.entry_extension.pack(anchor=W, padx=5)
+            self.mb.menu.add_command(label=key, command=getattr(
+                self, value[0]), accelerator=value[1])
         # endregion: Row 01
 
         # Row 02
@@ -63,14 +52,15 @@ class Notebook:
 
         self.lbl_arguments = ttk.Label(self.method_row_02, text="Arguments :")
         self.lbl_arguments.pack(anchor=W, padx=5)
-        self.cbox_arguments = ttk.Combobox(self.method_row_02, values=ARGUMENTS)
+        self.cbox_arguments = ttk.Combobox(
+            self.method_row_02, values=ARGUMENTS, state='readonly')
         self.cbox_arguments.current(0)
         self.cbox_arguments.pack(anchor=W, fill=X, padx=5)
         # endregion: Settings
 
         # region: Search & Replace
         self.search_labelframe = ttk.LabelFrame(
-        self.settings, text="Chercher et remplacer", padding=(0, 5))
+            self.settings, text="Chercher et remplacer", padding=(0, 5))
         self.search_labelframe.pack(fill=BOTH, pady=4, padx=10)
 
         # Row 01
@@ -89,14 +79,14 @@ class Notebook:
         # Row 02
         self.search_row_02 = ttk.Frame(self.search_labelframe)
         self.search_row_02.pack(anchor=W, fill=X)
-        
+
         self.lbl_replace = ttk.Label(self.search_row_02, text="Remplacer :")
         self.lbl_replace.pack(anchor=W, padx=5, fill=X, expand=True)
         self.entry_replace = ttk.Entry(self.search_row_02)
         self.entry_replace.pack(
             anchor=W, side=LEFT, padx=5, fill=X, expand=True)
         # endregion: Search & Replace
-        
+
         # --- PROFILES CONTENT
         self.lbl_filename = ttk.Label(self.profiles, text="PROFILS")
         self.lbl_filename.pack()
@@ -105,10 +95,8 @@ class Notebook:
 
         self.frame.pack(fill=BOTH, side=BOTTOM)
 
-
     def option_01(self):
         print("OPTION 01")
-
 
     def option_02(self):
         print("OPTION 02")
