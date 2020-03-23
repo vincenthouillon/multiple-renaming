@@ -113,7 +113,7 @@ class Notebook:
             self.count_row_02, from_=0, to=100, width=6)
         self.sbox_step.insert(0, 1)
         self.sbox_step.pack(anchor=W, padx=5, side=RIGHT)
-        self.count_row_02.pack(fill=X)
+        self.count_row_02.pack(fill=X, pady=2)
 
         self.count_row_03 = ttk.Frame(self.counter_labelframe)
         self.lbl_nb = ttk.Label(self.count_row_03, text="Nombre de chiffre :")

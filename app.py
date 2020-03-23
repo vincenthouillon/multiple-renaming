@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+import os
 from tkinter import *
+from tkinter.filedialog import askopenfilenames
 
-from widgets.treeview import Treeview
 from widgets.notebook import Notebook
 from widgets.statusbar import StatusBar
+from widgets.treeview import Treeview
 
 
 class MultipleRenaming:
@@ -22,7 +24,7 @@ class MultipleRenaming:
         self.master.config(menu=menu)
 
         file_menu = Menu(menu, tearoff=False)
-        file_menu.add_command(label="Ouvrir")
+        file_menu.add_command(label="Ouvrir", command=self.get_filenames)
         file_menu.add_command(label="Quitter", command=_exit)
         menu.add_cascade(label="Fichier", menu=file_menu)
 
@@ -36,6 +38,12 @@ class MultipleRenaming:
         Treeview(self.master)
         Notebook(self.master)
         StatusBar(self.master)
+
+    def get_filenames(self):
+        filenames = askopenfilenames()
+        for f in filenames:
+            statinfo = os.stat(f)
+            print(f"{f} - {statinfo.st_size/1024 :0.3} Mo")
 
 
 def _exit():
