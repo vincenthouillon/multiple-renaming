@@ -14,12 +14,16 @@ ARGUMENTS_LIST = [
 ]
 
 OPTIONS_LIST = {
-    "Nom"                        : ("option_01", "[n]"),
-    "Nom - premiers caractères x": ("option_01", "[nx]"),
-    "Nom - derniers caractères x": ("option_01", "[n-x]"),
-    "Nom - à partir de x"        : ("option_01", "[n,x]"),
-    "Extension"                  : ("option_02", "[e] "),
-    "Compteur"                   : ("option_02", "[c]"),
-    "Date - actuelle"            : ("option_02", "[d]"),
-
+    "Nom [n]"                          : "option_01",
+    "Nom - premiers caractères x [nx]" : "option_01",
+    "Nom - derniers caractères x [n-x]": "option_01",
+    "Nom - à partir de x [n,x]"        : "option_01",
+    "Extension [e]"                    : "option_02",
+    "Compteur [c]"                     : "option_02",
+    "Date - actuelle [d]"              : "option_02",
 }
+
+DATE_FORMAT_LIST = [
+    "yyyy-mm-dd hh-nn-ss",
+    "yyyymmdd",
+]

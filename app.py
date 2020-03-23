@@ -5,6 +5,7 @@ from tkinter import *
 
 from widgets.treeview import Treeview
 from widgets.notebook import Notebook
+from widgets.statusbar import StatusBar
 
 
 class MultipleRenaming:
@@ -15,7 +16,7 @@ class MultipleRenaming:
 
     def configure(self):
         self.master.title("Renommage Multiple")
-        self.master.minsize(600, 420)
+        self.master.minsize(700, 540)
 
         menu = Menu(self.master)
         self.master.config(menu=menu)
@@ -34,6 +35,7 @@ class MultipleRenaming:
         """ Add widgets. """
         Treeview(self.master)
         Notebook(self.master)
+        StatusBar(self.master)
 
 
 def _exit():
