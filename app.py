@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 from tkinter import *
-from tkinter import ttk
 
 from widgets.treeview import Treeview
 from widgets.notebook import Notebook
@@ -21,23 +20,24 @@ class MultipleRenaming:
         menu = Menu(self.master)
         self.master.config(menu=menu)
 
-        fileMenu = Menu(menu, tearoff=False)
-        fileMenu.add_command(label="Ouvrir")
-        fileMenu.add_command(label="Quitter", command=self._exit)
-        menu.add_cascade(label="Fichier", menu=fileMenu)
+        file_menu = Menu(menu, tearoff=False)
+        file_menu.add_command(label="Ouvrir")
+        file_menu.add_command(label="Quitter", command=_exit)
+        menu.add_cascade(label="Fichier", menu=file_menu)
 
-        editMenu = Menu(menu, tearoff=False)
-        editMenu.add_command(label="Afficher la licence")
-        editMenu.add_command(label="A propos")
-        menu.add_cascade(label="Aide", menu=editMenu)
+        edit_menu = Menu(menu, tearoff=False)
+        edit_menu.add_command(label="Afficher la licence")
+        edit_menu.add_command(label="A propos")
+        menu.add_cascade(label="Aide", menu=edit_menu)
 
     def create_widgets(self):
         """ Add widgets. """
         Treeview(self.master)
         Notebook(self.master)
 
-    def _exit(self):
-        exit()
+
+def _exit():
+    exit()
 
 
 if __name__ == "__main__":
