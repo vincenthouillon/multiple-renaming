@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 
+from widgets.constants import ARGUMENTS_LIST, OPTIONS_LIST
+
 
 class Notebook:
     def __init__(self, *args):
@@ -12,6 +14,10 @@ class Notebook:
         self.profiles = ttk.Frame(self.notebook)
         self.notebook.add(self.settings, text="Paramètres")
         self.notebook.add(self.profiles, text="Profils")
+
+        # CONSTANTS
+        ARGUMENTS = ARGUMENTS_LIST
+        OPTIONS = OPTIONS_LIST
 
         # --- SETTINGS CONTENT
         # region: Settings
@@ -34,10 +40,12 @@ class Notebook:
 
         self.mb = ttk.Menubutton(self.method_col_01, text="⚙️")
         self.mb.pack()
-        self.mb.menu = Menu(self.mb)
+        self.mb.menu = Menu(self.mb, tearoff=False)
         self.mb["menu"] = self.mb.menu
-        self.mb.menu.add_command(label="Option 1", command=option_01)
-        self.mb.menu.add_command(label="Option 2", command=option_02)
+
+        for key, value in OPTIONS_LIST.items():
+            self.mb.menu.add_command(label=key, command=getattr(self, value[0]), accelerator=value[1])
+            
 
         self.col02 = ttk.Frame(self.method_row_01)
         self.col02.pack(side=LEFT)
@@ -53,12 +61,11 @@ class Notebook:
         self.method_row_02 = ttk.Frame(self.method_labelframe)
         self.method_row_02.pack(anchor=W, fill=X, expand=True)
 
-        ARGUMENTS = ["Pas de changement", "Python", "Perl", "Java"]
         self.lbl_arguments = ttk.Label(self.method_row_02, text="Arguments :")
         self.lbl_arguments.pack(anchor=W, padx=5)
         self.cbox_arguments = ttk.Combobox(self.method_row_02, values=ARGUMENTS)
         self.cbox_arguments.current(0)
-        self.cbox_arguments.pack(anchor=W, fill=X)
+        self.cbox_arguments.pack(anchor=W, fill=X, padx=5)
         # endregion: Settings
 
         # region: Search & Replace
@@ -99,9 +106,9 @@ class Notebook:
         self.frame.pack(fill=BOTH, side=BOTTOM)
 
 
-def option_01():
-    print("OPTION 01")
+    def option_01(self):
+        print("OPTION 01")
 
 
-def option_02():
-    print("OPTION 02")
+    def option_02(self):
+        print("OPTION 02")
