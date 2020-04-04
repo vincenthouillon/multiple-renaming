@@ -1,13 +1,13 @@
 from tkinter import *
 from tkinter import ttk
 
-from widgets.constants import ARGUMENTS_LIST, OPTIONS_LIST, DATE_FORMAT_LIST
+from widgets.constants import ARGUMENTS_DICT, DATE_FORMAT_LIST, OPTIONS_DICT
 
 
 class Notebook:
-    def __init__(self, *args):
+    def __init__(self, master):
         """ Display Notebook section. """
-        self.frame = Frame(*args)
+        self.frame = Frame(master)
 
         self.notebook = ttk.Notebook(self.frame, padding=(0, 10, 0, 0))
         self.settings = ttk.Frame(self.notebook)
@@ -16,8 +16,8 @@ class Notebook:
         self.notebook.add(self.profiles, text="Profils")
 
         # CONSTANTS
-        ARGUMENTS = ARGUMENTS_LIST
-        OPTIONS = OPTIONS_LIST
+        ARGUMENTS = ARGUMENTS_DICT
+        OPTIONS = OPTIONS_DICT
         DATE_FORMAT = DATE_FORMAT_LIST
 
         # --- SETTINGS CONTENT
@@ -27,7 +27,7 @@ class Notebook:
         # region: Settings
         self.method_labelframe = ttk.LabelFrame(
             self.left_panel, text="Méthode", padding=(0, 5))
-        self.method_labelframe.pack(fill=BOTH, pady=4, padx=10)
+        self.method_labelframe.pack(fill=BOTH, pady=4, padx=10)  
 
         # region: Row 01
         self.method_row_01 = ttk.Frame(self.method_labelframe)
@@ -44,10 +44,6 @@ class Notebook:
         self.mb.pack()
         self.mb.menu = Menu(self.mb, tearoff=False)
         self.mb["menu"] = self.mb.menu
-
-        for key, value in OPTIONS_LIST.items():
-            self.mb.menu.add_command(label=key, command=getattr(
-                self, value))
         # endregion: Row 01
 
         # Row 02
@@ -57,7 +53,7 @@ class Notebook:
         self.lbl_arguments = ttk.Label(self.method_row_02, text="Arguments :")
         self.lbl_arguments.pack(anchor=W, padx=5)
         self.cbox_arguments = ttk.Combobox(
-            self.method_row_02, values=ARGUMENTS, state='readonly')
+            self.method_row_02, value=list(ARGUMENTS.values()), state='readonly')
         self.cbox_arguments.current(0)
         self.cbox_arguments.pack(anchor=W, fill=X, padx=5)
         # endregion: Settings
@@ -116,11 +112,11 @@ class Notebook:
         self.count_row_02.pack(fill=X, pady=2)
 
         self.count_row_03 = ttk.Frame(self.counter_labelframe)
-        self.lbl_nb = ttk.Label(self.count_row_03, text="Nombre de chiffre :")
-        self.lbl_nb.pack(side=LEFT)
-        self.sbox_nb = ttk.Spinbox(self.count_row_03, from_=0, to=5, width=6)
-        self.sbox_nb.insert(0, 2)
-        self.sbox_nb.pack(anchor=W, padx=5, side=RIGHT)
+        self.lbl_len = ttk.Label(self.count_row_03, text="Nombre de chiffre :")
+        self.lbl_len.pack(side=LEFT)
+        self.sbox_len = ttk.Spinbox(self.count_row_03, from_=0, to=5, width=6)
+        self.sbox_len.insert(0, 2)
+        self.sbox_len.pack(anchor=W, padx=5, side=RIGHT)
         self.count_row_03.pack(fill=X)
         #endregion: Counter
 
@@ -151,11 +147,3 @@ class Notebook:
 
         self.notebook.pack(fill=BOTH, side=TOP)
         self.frame.pack(fill=BOTH)
-
-    @staticmethod
-    def option_01():
-        print("OPTION 01")
-
-    @staticmethod
-    def option_02():
-        print("OPTION 02")

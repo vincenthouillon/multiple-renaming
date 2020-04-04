@@ -4,8 +4,8 @@ from tkinter import ttk
 class StatusBar:
     """ Display a satusbar. """
 
-    def __init__(self, *args):
-        self.frm_status = ttk.Frame(*args, relief="sunken")
+    def __init__(self, master):
+        self.frm_status = ttk.Frame(master, relief="sunken")
 
         self.lbl_count_files = ttk.Label(
             self.frm_status, text="2 fichier(s)")
