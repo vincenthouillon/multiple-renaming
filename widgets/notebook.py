@@ -106,7 +106,7 @@ class Notebook:
         self.lbl_step = ttk.Label(self.count_row_02, text="Pas :")
         self.lbl_step.pack(anchor=W, side=LEFT)
         self.sbox_step = ttk.Spinbox(
-            self.count_row_02, from_=0, to=100, width=6)
+            self.count_row_02, from_=1, to=100, width=6)
         self.sbox_step.insert(0, 1)
         self.sbox_step.pack(anchor=W, padx=5, side=RIGHT)
         self.count_row_02.pack(fill=X, pady=2)

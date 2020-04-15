@@ -8,7 +8,7 @@ class StatusBar:
         self.frm_status = ttk.Frame(master, relief="sunken")
 
         self.lbl_count_files = ttk.Label(
-            self.frm_status, text="2 fichier(s)")
+            self.frm_status, text="0 fichier(s)")
         self.lbl_count_files.pack(fill="x")
 
         self.frm_status.pack(fill="x")

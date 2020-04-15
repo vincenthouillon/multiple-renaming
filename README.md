@@ -39,3 +39,20 @@ def display_treeview(self):
         # return dict:
         # {'text': 'statusbar.py', 'image': '', 'values': ['statusbar.py', '0.48 Mo'], 'open': 0, 'tags': ''}
 ```
+
+```python
+    def is_valid(self, d, i, P):
+        # print(d, i, P)
+
+        # if "[c]" in P:
+        #     print(self.notebook.sbox_start.get())
+
+        if "[n]" not in P:
+            self.changed_filenames = [""] * len(self.initial_filenames)
+            self.display_treeview()
+        else:
+            self.changed_filenames = self.initial_filenames[:]
+            self.display_treeview(self.notebook.cbox_arguments.current())
+
+        return True
+```

@@ -2,6 +2,8 @@
 # -*- coding:utf-8 -*-
 
 import os
+import platform
+from datetime import datetime
 from tkinter import *
 from tkinter.filedialog import askopenfilenames
 
@@ -29,11 +31,24 @@ class MultipleRenaming:
         self.master.config(menu=menu)
 
         file_menu = Menu(menu, tearoff=False)
-        file_menu.add_command(
-            label="Ouvrir", accelerator="Command-O",
-            underline=0, command=self.get_filenames)
-        file_menu.add_command(
-            label="Quitter", accelerator="Command-W", command=quit)
+
+        if platform == "Darwin":
+            file_menu.add_command(
+                label="Ouvrir", accelerator="Command-O",
+                underline=0, command=self.get_filenames)
+            self.master.bind("<Command-o>", self.get_filenames)
+
+            file_menu.add_command(
+                label="Quitter", accelerator="Command-W", command=quit)
+        else:
+            file_menu.add_command(
+                label="Ouvrir", accelerator="Ctrl-O",
+                underline=0, command=self.get_filenames)
+            self.master.bind("<Control-o>", self.get_filenames)
+
+            file_menu.add_command(
+                label="Quitter", accelerator="Alt-F4", command=quit)
+
         menu.add_cascade(label="Fichier", menu=file_menu)
 
         edit_menu = Menu(menu, tearoff=False)
@@ -41,17 +56,17 @@ class MultipleRenaming:
         edit_menu.add_command(label="A propos")
         menu.add_cascade(label="Aide", menu=edit_menu)
 
-        # Binding
-        self.master.bind("<Command-o>", self.get_filenames)
-
     def start_count(self, event):
-        print("Start:", self.notebook.sbox_start.get())
+        print("Start updated:", self.notebook.sbox_start.get())
+        self.notebook.entry_filename.focus()
 
     def step_count(self, event):
-        print("Step:", self.notebook.sbox_step.get())
+        print("Step updated:", self.notebook.sbox_step.get())
+        self.notebook.entry_filename.focus()
 
     def lenght_count(self, event):
-        print("Lenght:", self.notebook.sbox_len.get())
+        print("Lenght updated:", self.notebook.sbox_len.get())
+        self.notebook.entry_filename.focus()
 
     def load_widgets(self):
         """ Add widgets. """
@@ -73,22 +88,38 @@ class MultipleRenaming:
 
     def is_valid(self, d, i, P):
         # print(d, i, P)
-        # NOTE Testing
-        if "[c]" in P:
-            print(self.notebook.sbox_start.get())
-        if "[n]" not in P:
-            self.changed_filenames = [""] * len(self.initial_filenames)
+
+        temp_filename = list()
+        for fn in self.initial_filenames:
+            temp_filename.append(os.path.splitext(os.path.basename(fn))[0])
+
+        if "[n]" in P:
+            for index, filename in enumerate(temp_filename):
+                self.changed_filenames[index] = P.replace("[n]", filename)
             self.display_treeview()
         else:
-            self.changed_filenames = self.initial_filenames[:]
-            self.display_treeview(self.notebook.cbox_arguments.current())
+            for index, dirname in enumerate(self.initial_filenames):
+                filename, ext = os.path.splitext(os.path.basename(dirname))
+                self.changed_filenames[index] = P
+            self.display_treeview()
+
+        if "[c]" in P:
+            counter = int(self.notebook.sbox_start.get())
+            for index, filename in enumerate(self.changed_filenames):
+                formated_counter = f"{counter:0{self.notebook.sbox_len.get()}}"
+                self.changed_filenames[index] = filename.replace(
+                    "[c]", formated_counter)
+                counter += int(self.notebook.sbox_step.get())
+            self.display_treeview()
+
         return True
 
     def get_filenames(self, *args):
         self.initial_filenames = askopenfilenames()
 
-        self.changed_filenames = [os.path.basename(
-            fn) for fn in self.initial_filenames]
+        self.changed_filenames = [
+            os.path.splitext(os.path.basename(fn))[0]
+            for fn in self.initial_filenames]
 
         self.statusbar.lbl_count_files.config(
             text=f"{len(self.initial_filenames)} fichier(s)")
@@ -102,26 +133,25 @@ class MultipleRenaming:
                 self.initial_filenames, self.changed_filenames):
             old_name = os.path.basename(initial)
             new_name = os.path.basename(changed)
-            nn_filename = os.path.splitext(new_name)[0]
-            nn_extension = os.path.splitext(old_name)[1]
-            name_modified = nn_filename + nn_extension
+            extension = os.path.splitext(old_name)[1]
+            name_modified = new_name + extension
 
             if argument == 1:
-                name_modified = nn_filename.lower() + nn_extension
+                name_modified = new_name.lower() + extension
             elif argument == 2:
-                name_modified = nn_filename.upper() + nn_extension
+                name_modified = new_name.upper() + extension
             elif argument == 3:
-                name_modified = nn_filename + nn_extension.lower()
+                name_modified = new_name + extension.lower()
             elif argument == 4:
-                name_modified = nn_filename + nn_extension.upper()
+                name_modified = new_name + extension.upper()
             elif argument == 5:
-                name_modified = new_name.lower()
+                name_modified = new_name.lower() + extension.lower()
             elif argument == 6:
-                name_modified = new_name.upper()
+                name_modified = new_name.upper() + extension.upper()
             elif argument == 7:
-                name_modified = nn_filename.title() + nn_extension
+                name_modified = new_name.title() + extension
             elif argument == 8:
-                name_modified = nn_filename.capitalize() + nn_extension
+                name_modified = new_name.capitalize() + extension
 
             # Treeview output
             size = f"{os.path.getsize(initial)/1024:.2f} Mo"

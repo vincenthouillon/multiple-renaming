@@ -17,7 +17,6 @@ OPTIONS_DICT = {
     "[nx]" : "Nom - premiers caractères x [nx]",
     "[n-x]": "Nom - derniers caractères x [n-x]",
     "[n,x]": "Nom - à partir de x [n,x]",
-    "[e]"  : "Extension [e]",
     "[c]"  : "Compteur [c]",
     "[d]"  : "Date - actuelle [d]"
 }
@@ -26,3 +25,9 @@ DATE_FORMAT_LIST = [
     "yyyy-mm-dd hh-nn-ss",
     "yyyymmdd",
 ]
+
+"""
+Option(s) supprimée(s):
+
+    "[e]"  : "Extension [e]",
+"""
