@@ -22,8 +22,20 @@ OPTIONS_DICT = {
 }
 
 DATE_FORMAT_LIST = [
-    "yyyy-mm-dd hh-nn-ss",
     "yyyymmdd",
+    "yyyy-mm-dd",
+    "yyyy-mm-dd hh-nn",
+    "yyyy-mm-dd hh-nn-ss",
+    "dd-mm-yy",
+    "dd-mm-yy hh-nn",
+    "dd-mm-yy hh-nn-ss",
+    "mm-dd-yyyy",
+    "mm-dd-yyyy hh-nn",
+    "mm-dd-yyyy hh-nn-ss",
+    "yyyy",
+    "yy",
+    "mm",
+    "mmyy"
 ]
 
 """
