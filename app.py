@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
+"""
+Copyright 2020 Vincent Houillon
+This file is written by Vincent Houillon.
+Redistribution or reuse is not permitted without express written consent.
+"""
+
 import os
 import platform
 from datetime import datetime
@@ -32,7 +38,7 @@ class MultipleRenaming:
 
         file_menu = Menu(menu, tearoff=False)
 
-        if platform == "Darwin":
+        if platform.system() == "Darwin":
             file_menu.add_command(
                 label="Ouvrir", accelerator="Command-O",
                 underline=0, command=self.get_filenames)
@@ -55,21 +61,51 @@ class MultipleRenaming:
         edit_menu.add_command(label="Afficher la licence")
         edit_menu.add_command(label="A propos")
         menu.add_cascade(label="Aide", menu=edit_menu)
+ 
+    # -------------------------------------------------------------------------
+    # BUG Créer une fonction pour la recherche pour mettre à jour l'affichage 
+    # quand il n'y a rien dans le champ de saisie.
 
-    def start_count(self, event):
-        print("Start updated:", self.notebook.sbox_start.get())
-        self.notebook.entry_filename.focus()
+    def search_and_replace(self, event):
+        search_expr = self.notebook.entry_search.get()
+        replace_expr = self.notebook.entry_replace.get()
+        self.notebook.entry_replace.focus()
 
-    def step_count(self, event):
-        print("Step updated:", self.notebook.sbox_step.get())
-        self.notebook.entry_filename.focus()
+        if len(search_expr) > 0 and len(replace_expr) > 0:
+            for index, word in enumerate(self.changed_filenames_copy):
+                if search_expr in word:
+                    self.changed_filenames[index] = word.replace(
+                        search_expr, replace_expr)
+            self.display_treeview()
+        else:
+            self.changed_filenames = self.changed_filenames_copy[:]
+            self.display_treeview()
+    # -------------------------------------------------------------------------
 
-    def lenght_count(self, event):
-        print("Lenght updated:", self.notebook.sbox_len.get())
-        self.notebook.entry_filename.focus()
+    def rename(self):
+        """Renaming files."""
+        for index, (initial, modified) in enumerate(zip(self.initial_filenames,
+                                                        self.changed_filenames)):
+            dirname_initial = os.path.dirname(initial)
+            basename_initial = os.path.basename(initial)
+            filename_initial, extension_initial = os.path.splitext(
+                basename_initial)
 
-    def formatted_date(self, event):
-        self.notebook.entry_filename.focus()
+            new_file = os.path.join(
+                dirname_initial, modified + extension_initial)
+
+            os.rename(initial, new_file)
+
+            # Convert tuple to list.
+            self.initial_filenames = list(self.initial_filenames)
+
+            # Update renamed file
+            self.initial_filenames[index] = new_file
+
+        try:
+            self.display_treeview()
+        except FileNotFoundError:
+            print("[-] Error: File Not Found!")
 
     def load_widgets(self):
         """ Add widgets. """
@@ -79,17 +115,23 @@ class MultipleRenaming:
         # Binding
         self.notebook.cbox_arguments.bind(
             "<<ComboboxSelected>>", self.arguments_callback)
-        self.notebook.sbox_start.bind("<ButtonRelease>", self.start_count)
-        self.notebook.sbox_step.bind("<ButtonRelease>", self.step_count)
-        self.notebook.sbox_len.bind("<ButtonRelease>", self.lenght_count)
+        self.notebook.sbox_start.bind(
+            "<ButtonRelease>", lambda event: self.notebook.entry_filename.focus())
+        self.notebook.sbox_step.bind(
+            "<ButtonRelease>", lambda event: self.notebook.entry_filename.focus())
+        self.notebook.sbox_len.bind(
+            "<ButtonRelease>", lambda event: self.notebook.entry_filename.focus())
         self.notebook.cbox_date.bind(
-            "<<ComboboxSelected>>", self.formatted_date)
+            "<<ComboboxSelected>>", lambda event: self.notebook.entry_filename.focus())
+        self.notebook.entry_replace.bind(
+            "<KeyRelease>", self.search_and_replace)
 
         # NOTE In progress
         self.valid = self.notebook.frame.register(self.is_valid)
         self.notebook.entry_filename.config(
             validate="all", validatecommand=(self.valid, "%d", "%i", "%P"))
         self.statusbar = StatusBar(self.master)
+        self.notebook.btn_rename.config(command=self.rename)
 
     def is_valid(self, d, i, P):
         # print(d, i, P)
@@ -130,22 +172,22 @@ class MultipleRenaming:
     def date_formatting(self):
         # TODO Gestion des erreurs et limite des caractères
         now = datetime.now()
-        date_gabarit = self.notebook.cbox_date.get()
-        if "yyyy" in date_gabarit:
-            date_gabarit = date_gabarit.replace("yyyy", now.strftime("%Y"))
-        elif "yy" in date_gabarit:
-            date_gabarit = date_gabarit.replace("yy", now.strftime("%y"))
-        if "mm" in date_gabarit:
-            date_gabarit = date_gabarit.replace("mm", now.strftime("%m"))
-        if "dd" in date_gabarit:
-            date_gabarit = date_gabarit.replace("dd", now.strftime("%d"))
-        if "hh" in date_gabarit:
-            date_gabarit = date_gabarit.replace("hh", now.strftime("%H"))
-        if "nn" in date_gabarit:
-            date_gabarit = date_gabarit.replace("nn", now.strftime("%M"))
-        if "ss" in date_gabarit:
-            date_gabarit = date_gabarit.replace("ss", now.strftime("%S"))
-        return date_gabarit
+        date_format = self.notebook.cbox_date.get()
+        if "yyyy" in date_format:
+            date_format = date_format.replace("yyyy", now.strftime("%Y"))
+        elif "yy" in date_format:
+            date_format = date_format.replace("yy", now.strftime("%y"))
+        if "mm" in date_format:
+            date_format = date_format.replace("mm", now.strftime("%m"))
+        if "dd" in date_format:
+            date_format = date_format.replace("dd", now.strftime("%d"))
+        if "hh" in date_format:
+            date_format = date_format.replace("hh", now.strftime("%H"))
+        if "nn" in date_format:
+            date_format = date_format.replace("nn", now.strftime("%M"))
+        if "ss" in date_format:
+            date_format = date_format.replace("ss", now.strftime("%S"))
+        return date_format
 
     def get_filenames(self, *args):
         self.initial_filenames = askopenfilenames()
@@ -153,6 +195,8 @@ class MultipleRenaming:
         self.changed_filenames = [
             os.path.splitext(os.path.basename(fn))[0]
             for fn in self.initial_filenames]
+
+        self.changed_filenames_copy = self.changed_filenames[:]
 
         self.statusbar.lbl_count_files.config(
             text=f"{len(self.initial_filenames)} fichier(s)")
@@ -170,7 +214,8 @@ class MultipleRenaming:
             extension = os.path.splitext(old_name)[1]
             name_modified = new_name + extension
 
-            name_modified = self.arguments_parsing(argument, new_name, extension)
+            name_modified = self.arguments_parsing(
+                argument, new_name, extension)
 
             # Treeview output
             size = f"{os.path.getsize(initial)/1024:.2f} Mo"
@@ -178,23 +223,23 @@ class MultipleRenaming:
             self.treeview.tree.insert(
                 "", "end", text=old_name, values=(name_modified, size))
 
-    def arguments_parsing(self, arg, nn, ext):
+    def arguments_parsing(self, arg, new_name, ext):
         parser = {
-            1: nn.lower() + ext,
-            2: nn.upper() + ext,
-            3: nn + ext.lower(),
-            4: nn + ext.upper(),
-            5: nn.lower() + ext.lower(),
-            6: nn.upper() + ext.upper(),
-            7: nn.title() + ext,
-            8: nn.capitalize() + ext
+            1: new_name.lower() + ext,
+            2: new_name.upper() + ext,
+            3: new_name + ext.lower(),
+            4: new_name + ext.upper(),
+            5: new_name.lower() + ext.lower(),
+            6: new_name.upper() + ext.upper(),
+            7: new_name.title() + ext,
+            8: new_name.capitalize() + ext
         }
 
         for key, value in parser.items():
             if arg == key:
                 return value
-
-        return nn + ext
+        else:
+            return new_name + ext
 
     def arguments_callback(self, event):
         for key, value in ARGUMENTS_DICT.items():
