@@ -91,19 +91,27 @@ class MultipleRenaming:
             filename_initial, extension_initial = os.path.splitext(
                 basename_initial)
 
-            new_file = os.path.join(
-                dirname_initial, modified + extension_initial)
+            # Get the key from the arguments list
+            for key, value in ARGUMENTS_DICT.items():
+                if self.notebook.cbox_arguments.get() in value:
+                    arg_key = key
 
-            os.rename(initial, new_file)
+            # Apply argument options
+            modified = self.arguments_parsing(arg_key, modified, extension_initial)
+            
+            new_filename = os.path.join(dirname_initial, modified)
+
+            os.rename(initial, new_filename)
 
             # Convert tuple to list.
             self.initial_filenames = list(self.initial_filenames)
 
             # Update renamed file
-            self.initial_filenames[index] = new_file
+            self.initial_filenames[index] = new_filename
 
         try:
             self.display_treeview()
+            self.notebook.entry_filename.focus()
         except FileNotFoundError:
             print("[-] Error: File Not Found!")
 
