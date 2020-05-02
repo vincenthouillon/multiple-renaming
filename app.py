@@ -14,7 +14,7 @@ from tkinter import *
 from tkinter.filedialog import askopenfilenames
 
 from widgets.constants import ARGUMENTS_DICT, OPTIONS_DICT
-from widgets.notebook import Notebook
+from widgets.parameters import Parameters
 from widgets.statusbar import StatusBar
 from widgets.treeview import Treeview
 
@@ -61,15 +61,41 @@ class MultipleRenaming:
         edit_menu.add_command(label="Afficher la licence")
         edit_menu.add_command(label="A propos")
         menu.add_cascade(label="Aide", menu=edit_menu)
- 
+
+    def load_widgets(self):
+        """ Add widgets. """
+        self.treeview = Treeview(self.master)
+        self.parameters = Parameters(self.master)
+        self.populate_options()
+        # Binding
+        self.parameters.cbox_arguments.bind(
+            "<<ComboboxSelected>>", self.arguments_callback)
+        self.parameters.sbox_start.bind(
+            "<ButtonRelease>", lambda event: self.parameters.entry_filename.focus())
+        self.parameters.sbox_step.bind(
+            "<ButtonRelease>", lambda event: self.parameters.entry_filename.focus())
+        self.parameters.sbox_len.bind(
+            "<ButtonRelease>", lambda event: self.parameters.entry_filename.focus())
+        self.parameters.cbox_date.bind(
+            "<<ComboboxSelected>>", lambda event: self.parameters.entry_filename.focus())
+        self.parameters.entry_replace.bind(
+            "<KeyRelease>", self.search_and_replace)
+
+        # NOTE In progress
+        self.valid = self.parameters.frame.register(self.is_valid)
+        self.parameters.entry_filename.config(
+            validate="all", validatecommand=(self.valid, "%d", "%i", "%P"))
+        self.statusbar = StatusBar(self.master)
+        self.parameters.btn_rename.config(command=self.rename)
+
     # -------------------------------------------------------------------------
-    # BUG Créer une fonction pour la recherche pour mettre à jour l'affichage 
+    # BUG Créer une fonction pour la recherche pour mettre à jour l'affichage
     # quand il n'y a rien dans le champ de saisie.
 
     def search_and_replace(self, event):
-        search_expr = self.notebook.entry_search.get()
-        replace_expr = self.notebook.entry_replace.get()
-        self.notebook.entry_replace.focus()
+        search_expr = self.parameters.entry_search.get()
+        replace_expr = self.parameters.entry_replace.get()
+        self.parameters.entry_replace.focus()
 
         if len(search_expr) > 0 and len(replace_expr) > 0:
             for index, word in enumerate(self.changed_filenames_copy):
@@ -93,12 +119,13 @@ class MultipleRenaming:
 
             # Get the key from the arguments list
             for key, value in ARGUMENTS_DICT.items():
-                if self.notebook.cbox_arguments.get() in value:
+                if self.parameters.cbox_arguments.get() in value:
                     arg_key = key
 
             # Apply argument options
-            modified = self.arguments_parsing(arg_key, modified, extension_initial)
-            
+            modified = self.arguments_parsing(
+                arg_key, modified, extension_initial)
+
             new_filename = os.path.join(dirname_initial, modified)
 
             os.rename(initial, new_filename)
@@ -111,35 +138,12 @@ class MultipleRenaming:
 
         try:
             self.display_treeview()
-            self.notebook.entry_filename.focus()
+            self.parameters.entry_filename.focus()
         except FileNotFoundError:
             print("[-] Error: File Not Found!")
 
-    def load_widgets(self):
-        """ Add widgets. """
-        self.treeview = Treeview(self.master)
-        self.notebook = Notebook(self.master)
-        self.populate_options()
-        # Binding
-        self.notebook.cbox_arguments.bind(
-            "<<ComboboxSelected>>", self.arguments_callback)
-        self.notebook.sbox_start.bind(
-            "<ButtonRelease>", lambda event: self.notebook.entry_filename.focus())
-        self.notebook.sbox_step.bind(
-            "<ButtonRelease>", lambda event: self.notebook.entry_filename.focus())
-        self.notebook.sbox_len.bind(
-            "<ButtonRelease>", lambda event: self.notebook.entry_filename.focus())
-        self.notebook.cbox_date.bind(
-            "<<ComboboxSelected>>", lambda event: self.notebook.entry_filename.focus())
-        self.notebook.entry_replace.bind(
-            "<KeyRelease>", self.search_and_replace)
-
-        # NOTE In progress
-        self.valid = self.notebook.frame.register(self.is_valid)
-        self.notebook.entry_filename.config(
-            validate="all", validatecommand=(self.valid, "%d", "%i", "%P"))
-        self.statusbar = StatusBar(self.master)
-        self.notebook.btn_rename.config(command=self.rename)
+        if self.parameters.check_var.get():
+            quit()
 
     def is_valid(self, d, i, P):
         # print(d, i, P)
@@ -161,12 +165,12 @@ class MultipleRenaming:
             self.display_treeview()
 
         if "[c]" in P:
-            counter = int(self.notebook.sbox_start.get())
+            counter = int(self.parameters.sbox_start.get())
             for index, filename in enumerate(self.changed_filenames):
-                formated_counter = f"{counter:0{self.notebook.sbox_len.get()}}"
+                formated_counter = f"{counter:0{self.parameters.sbox_len.get()}}"
                 self.changed_filenames[index] = filename.replace(
                     "[c]", formated_counter)
-                counter += int(self.notebook.sbox_step.get())
+                counter += int(self.parameters.sbox_step.get())
             self.display_treeview()
 
         if "[d]" in P:
@@ -180,7 +184,7 @@ class MultipleRenaming:
     def date_formatting(self):
         # TODO Gestion des erreurs et limite des caractères
         now = datetime.now()
-        date_format = self.notebook.cbox_date.get()
+        date_format = self.parameters.cbox_date.get()
         if "yyyy" in date_format:
             date_format = date_format.replace("yyyy", now.strftime("%Y"))
         elif "yy" in date_format:
@@ -251,13 +255,13 @@ class MultipleRenaming:
 
     def arguments_callback(self, event):
         for key, value in ARGUMENTS_DICT.items():
-            if self.notebook.cbox_arguments.get() in value:
+            if self.parameters.cbox_arguments.get() in value:
                 self.display_treeview(key)
 
     def populate_options(self):
-        entry = self.notebook.entry_filename
+        entry = self.parameters.entry_filename
         for key, value in OPTIONS_DICT.items():
-            self.notebook.mb.menu.add_command(
+            self.parameters.mb.menu.add_command(
                 label=value,
                 command=lambda k=key: entry.insert(entry.index(INSERT), k)
             )
