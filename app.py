@@ -5,6 +5,8 @@
 Copyright 2020 Vincent Houillon
 This file is written by Vincent Houillon.
 Redistribution or reuse is not permitted without express written consent.
+
+GitHub: https://github.com/vincenthouillon/multiple_renaming
 """
 
 import os
@@ -12,6 +14,7 @@ import platform
 from datetime import datetime
 from tkinter import *
 from tkinter.filedialog import askopenfilenames
+from tkinter.messagebox import showerror
 
 from widgets.constants import ARGUMENTS_DICT, OPTIONS_DICT
 from widgets.parameters import Parameters
@@ -29,9 +32,20 @@ class MultipleRenaming:
         self.initial_filenames = list()
         self.changed_filenames = list()
 
+        self.prohibited_characters = [
+            "<", ">", "\\", "/", ":", "*", "?", "|", "\""]
+        self.prohibited_filename = ["CON", "PRN", "AUX", "NUL", "COM1", "COM2",
+                                    "COM3", "COM4", "COM5", "COM6", "COM7", "COM8",
+                                    "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5",
+                                    "LPT6", "LPT7", "LPT8", "LPT9"]
+
     def configure(self):
         self.master.title("Renommage Multiple")
         self.master.minsize(700, 540)
+        self.master.geometry("700x540")
+
+        img = Image("photo", file="icons/rename.png")
+        self.master.tk.call("wm", "iconphoto", self.master._w, img)
 
         menu = Menu(self.master)
         self.master.config(menu=menu)
@@ -128,7 +142,13 @@ class MultipleRenaming:
 
             new_filename = os.path.join(dirname_initial, modified)
 
-            os.rename(initial, new_filename)
+            try:
+                os.rename(initial, new_filename)
+            except OSError:
+                print("[-] La syntaxe du nom de fichier est incorrecte")
+                showerror(
+                    "Erreur", "La syntaxe du nom de fichier est incorrecte")
+                break
 
             # Convert tuple to list.
             self.initial_filenames = list(self.initial_filenames)
@@ -162,6 +182,39 @@ class MultipleRenaming:
             for index, dirname in enumerate(self.initial_filenames):
                 filename, ext = os.path.splitext(os.path.basename(dirname))
                 self.changed_filenames[index] = P
+            self.display_treeview()
+
+        # Option [nx]
+        if re.findall(r"\[n\d+\]", P):
+            re_findall = re.findall(r"\[n\d+\]", P)
+            nx = re_findall[0][2:len(re_findall)-2]
+            for index, filename in enumerate(temp_filename):
+                self.changed_filenames[index] = P.replace(
+                    re_findall[0], filename[0:int(nx)])
+            self.display_treeview()
+
+        # Option [n-x]
+        if re.findall(r"\[n-\d+\]", P):
+            re_findall = re.findall(r"\[n-\d+\]", P)
+            nx = re_findall[0][3:len(re_findall)-2]
+            for index, filename in enumerate(temp_filename):
+                if len(filename) >= int(nx):
+                    self.changed_filenames[index] = P.replace(
+                        re_findall[0], filename[len(filename)-int(nx):])
+                else:
+                    self.changed_filenames[index] = filename
+            self.display_treeview()
+
+        # Option [n,x]
+        if re.findall(r"\[n,\d+\]", P):
+            re_findall = re.findall(r"\[n,\d+\]", P)
+            nx = re_findall[0][3:len(re_findall)-2]
+            for index, filename in enumerate(temp_filename):
+                if len(filename) >= int(nx):
+                    self.changed_filenames[index] = P.replace(
+                        re_findall[0], filename[int(nx)-1:len(filename)])
+                else:
+                    self.changed_filenames[index] = filename
             self.display_treeview()
 
         if "[c]" in P:
@@ -229,11 +282,54 @@ class MultipleRenaming:
             name_modified = self.arguments_parsing(
                 argument, new_name, extension)
 
-            # Treeview output
-            size = f"{os.path.getsize(initial)/1024:.2f} Mo"
+            if platform.system() == "Windows":
+                self.check_valid_characters_filename(name_modified)
+
+            date_creation = datetime.fromtimestamp(os.path.getmtime(initial))
+            date_creation_formated = datetime.strftime(
+                date_creation, "%Y/%m/%d %H:%M:%S")
+
+            date_modified = datetime.fromtimestamp(os.path.getctime(initial))
+            date_modified_formated = datetime.strftime(
+                date_modified, "%Y/%m/%d %H:%M:%S")
+
+            location = os.path.abspath(initial)
+
+            size = self.get_human_readable_size(os.path.getsize(initial))
 
             self.treeview.tree.insert(
-                "", "end", text=old_name, values=(name_modified, size))
+                "", "end", text=old_name, values=(name_modified, size, date_creation_formated, date_modified_formated, location))
+
+    def get_human_readable_size(self, size, precision=2):
+        """Convert n bytes into a human readable string based on format.
+
+        Arguments:
+            size {float} -- File size
+
+        Keyword Arguments:
+            precision {int} -- Number of digits after the decimal point. (default: {2})
+
+        Returns:
+            [type] -- [description]
+        """
+        suffixes = ['o', 'Ko', 'Mo', 'Go', 'To']
+        suffix_index = 0
+        while size > 1024 and suffix_index < 4:
+            suffix_index += 1  # increment the index of the suffix
+            size = size/1024.0  # apply the division
+        return "%.*f %s" % (precision, size, suffixes[suffix_index])
+
+    def check_valid_characters_filename(self, name_modified):
+        for char in self.prohibited_characters:
+            if char in name_modified:
+                self.parameters.btn_rename.config(state="disabled")
+                showerror(
+                    "Erreur",
+                    "Un nom de fichier ne peut pas contenir les caractères \
+            suivants : \ / : * ? \" < > | ")
+                break
+            else:
+                self.parameters.btn_rename.config(state="normal")
 
     def arguments_parsing(self, arg, new_name, ext):
         parser = {

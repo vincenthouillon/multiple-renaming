@@ -10,6 +10,6 @@
 
 ### Treeview:
 Ajouter les colonnes suivantes :
-* [ ] Modifié le
-* [ ] Crée le
-* [ ] Emplacement
+* [x] Modifié le
+* [x] Crée le
+* [x] Emplacement
