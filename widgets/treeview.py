@@ -9,10 +9,14 @@ class Treeview:
 
         self.tree = ttk.Treeview(self.pw_header, column=(
             "#0", "#01", "#02", "#03", "#04", "#05"), selectmode="none")
+
+        self.tree.tag_configure("ERR", foreground="#d63031", font=(
+            "sans-serif", 12, "bold italic"))
+
+        # Scrollbar
         horizontal_scrollbar = ttk.Scrollbar(
             self.pw_header, orient="horizontal", command=self.tree.xview)
         horizontal_scrollbar.pack(side="bottom", fill="x")
-
         self.tree.configure(xscrollcommand=horizontal_scrollbar.set)
 
         self.tree.column("#0", minwidth=180)

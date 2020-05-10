@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
-from widgets.constants import ARGUMENTS_DICT, DATE_FORMAT_LIST, OPTIONS_DICT
+from common.constants import ARGUMENTS_DICT, DATE_FORMAT_LIST, OPTIONS_DICT
 
 
 class Parameters:
