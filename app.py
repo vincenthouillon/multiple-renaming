@@ -9,12 +9,13 @@ GitHub: https://github.com/vincenthouillon/multiple_renaming
 
 import os
 import platform
+import winsound
 from datetime import datetime
 from tkinter import *
 from tkinter.filedialog import askopenfilenames
-from tkinter.messagebox import showerror
 
-from common.constants import ARGUMENTS_DICT, OPTIONS_DICT
+from common.constants import (ARGUMENTS_DICT, OPTIONS_DICT,
+                              WINDOWS_PROHIBITED_CHAR)
 from common.modules import Modules
 from widgets.parameters import Parameters
 from widgets.statusbar import StatusBar
@@ -27,14 +28,10 @@ class MultipleRenaming:
         self.master = master
         self.configure()
         self.load_widgets()
-        self.module = Modules()
+        self.modules = Modules()
 
         self.initial_filenames = list()
         self.changed_filenames = list()
-        self.changed_filenames_copy = list()
-
-        self.prohibited_characters = [
-            "<", ">", "\\", "/", ":", "*", "?", "|", "\""]
 
     def configure(self):
         self.master.title("Renommage Multiple")
@@ -108,13 +105,16 @@ class MultipleRenaming:
         self.initial_filepath = askopenfilenames()
         self.initial_filenames = list()
 
+        # for basename in self.initial_filepath:
+        #     self.initial_filenames.append(os.path.basename(basename))
+
         for basename in self.initial_filepath:
-            self.initial_filenames.append(os.path.basename(basename))
+            self.initial_filenames.append(basename)
 
         self.changed_filenames = self.initial_filenames[:]
 
         self.statusbar.lbl_count_files.config(
-            text=f"{len(self.initial_filenames)} fichier(s)")
+            text=f"{len(self.initial_filenames)} fichier(s) |")
         self.display_treeview()
 
     def input_filename(self, P):
@@ -130,8 +130,11 @@ class MultipleRenaming:
 
         user_input = P
 
-        date_format = self.module.date_formatting(self.params.cbox_date.get())
+        date_format = self.modules.date_formatting(self.params.cbox_date.get())
         counter = int(self.params.sbox_start.get())
+
+        if platform.system() == "Windows":
+            self.check_valid_characters_filename(user_input)
 
         for index, (initial, changed) in enumerate(
                 zip(self.initial_filenames, self.changed_filenames)):
@@ -194,6 +197,9 @@ class MultipleRenaming:
         search_expr = self.params.entry_search.get()
         replace_expr = self.params.entry_replace.get()
 
+        if platform.system() == "Windows":
+            self.check_valid_characters_filename(replace_expr)
+
         if len(search_expr) > 0:
             self.changed_filenames = self.initial_filenames[:]
             for index, word in enumerate(self.initial_filenames):
@@ -218,15 +224,17 @@ class MultipleRenaming:
                     arg_key = key
 
             # Apply argument options
-            modified = self.arguments_parsing(
-                arg_key, modified, extension_initial)
+            modified = self.modules.arguments_parsing(
+                arg_key,
+                os.path.splitext(modified)[0],
+                extension_initial)
 
             new_filename = os.path.join(dirname_initial, modified)
 
             try:
-                os.rename(initial, new_filename)
+                os.rename(initial, modified)
             except OSError:
-                showerror(
+                print(
                     "Erreur", "La syntaxe du nom de fichier est incorrecte")
                 break
 
@@ -234,8 +242,8 @@ class MultipleRenaming:
             self.initial_filenames = list(self.initial_filenames)
 
             # Update renamed file
-            self.initial_filenames[index] = new_filename
-            self.changed_filenames_copy = self.changed_filenames[:]
+            self.initial_filenames[index] = modified
+     
 
         self.display_treeview()
         self.params.entry_filename.focus()
@@ -250,17 +258,19 @@ class MultipleRenaming:
             argument {int} -- Key to the arguments, to transform text into
             capital letters for example. (default: {None})
         """
-        # Delete treeview
+
+        # Delete treeview content
         self.treeview.tree.delete(*self.treeview.tree.get_children())
 
         for initial, changed in zip(
-                self.initial_filepath, self.changed_filenames):
+                self.initial_filenames, self.changed_filenames):
 
             old_name = os.path.basename(initial)
-            new_name = os.path.basename(changed)
+            # new_name = os.path.basename(changed)
+            new_name, ext = os.path.splitext(os.path.basename(changed))
 
-            if platform.system() == "Windows":
-                self.module.check_valid_characters_filename(new_name)
+            name_modified = self.modules.arguments_parsing(
+                argument, new_name, ext)
 
             date_creation = datetime.fromtimestamp(os.path.getmtime(initial))
             date_creation_formated = datetime.strftime(
@@ -272,7 +282,7 @@ class MultipleRenaming:
 
             location = os.path.abspath(initial)
 
-            size = self.module.get_human_readable_size(
+            size = self.modules.get_human_readable_size(
                 os.path.getsize(initial))
 
             # Find duplicate files
@@ -280,33 +290,52 @@ class MultipleRenaming:
                 [x for x in self.changed_filenames
                  if self.changed_filenames.count(x) > 1])
 
-            if os.path.splitext(new_name)[0] in [x for x in duplicate_files]:
+            if name_modified in [x for x in duplicate_files]:
                 self.treeview.tree.insert(
                     "", "end",
                     text=old_name,
-                    values=(new_name, size, date_creation_formated,
+                    values=(name_modified, size, date_creation_formated,
                             date_modified_formated, location), tag="ERR")
-                self.activate_button("disabled")
+                self.activate_button(False)
                 continue
+
             else:
                 self.treeview.tree.insert(
                     "", "end",
                     text=old_name,
-                    values=(new_name, size, date_creation_formated,
+                    values=(name_modified, size, date_creation_formated,
                             date_modified_formated, location))
-                self.activate_button("normal")
 
-    # BUG Not used at the moment, to be implemented
     def activate_button(self, state="normal"):
         """Set state button rename.
 
         Keyword Arguments:
-            state {str} -- "normal" or "disabled" (default: {"normal"})
+            state {str} -- "normal" or False (default: {"normal"})
         """
         if state == "normal":
             self.params.btn_rename.config(state="normal")
         else:
             self.params.btn_rename.config(state="disabled")
+
+    def check_valid_characters_filename(self, name_modified):
+        """Checks that the file name does not contain characters 
+        prohibited by Windows
+
+        Arguments:
+            name_modified {str} -- Filename
+        """
+
+        for char in WINDOWS_PROHIBITED_CHAR:
+            if char in name_modified:
+                self.statusbar.lbl_alert.config(
+                    text="Un nom de fichier ne peut pas contenir les caractères"
+                    " suivants : \ / : * ? \" < > |")
+                winsound.PlaySound("SystemAsterisk", winsound.SND_ASYNC)
+                self.activate_button(False)
+                break
+            else:
+                self.statusbar.lbl_alert.config(text="")
+                self.activate_button()
 
     def arguments_callback(self, event):
         for key, value in ARGUMENTS_DICT.items():

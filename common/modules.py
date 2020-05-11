@@ -1,9 +1,5 @@
 
 from datetime import datetime
-from tkinter import *
-from tkinter.messagebox import showerror
-
-from common.constants import WINDOWS_PROHIBITED_CHAR as wpc
 
 
 class Modules:
@@ -28,6 +24,16 @@ class Modules:
         return "%.*f %s" % (precision, size, suffixes[suffix_index])
 
     def arguments_parsing(self, arg, new_name, ext):
+        """Analysis of arguments to apply to file names.
+
+        Arguments:
+            arg {int} -- Indeex of argument
+            new_name {str} -- Filename in formatted
+            ext {str} -- Extension
+
+        Returns:
+            str -- Name of the formatted file with its extension
+        """
         parser = {
             1: new_name.lower() + ext,
             2: new_name.upper() + ext,
@@ -72,19 +78,3 @@ class Modules:
         if "ss" in date_format:
             date_format = date_format.replace("ss", now.strftime("%S"))
         return date_format
-
-    def check_valid_characters_filename(self, name_modified):
-        """Checks that the file name does not contain characters 
-        prohibited by Windows
-
-        Arguments:
-            name_modified {str} -- File name
-        """
-
-        for char in wpc:
-            if char in name_modified:
-                showerror(
-                    "Erreur",
-                    "Un nom de fichier ne peut pas contenir les caractères"
-                    "\nsuivants : \ / : * ? \" < > | ")
-                break

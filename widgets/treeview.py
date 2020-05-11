@@ -1,3 +1,4 @@
+import platform
 from tkinter import ttk
 
 
@@ -10,8 +11,12 @@ class Treeview:
         self.tree = ttk.Treeview(self.pw_header, column=(
             "#0", "#01", "#02", "#03", "#04", "#05"), selectmode="none")
 
-        self.tree.tag_configure("ERR", foreground="#d63031", font=(
-            "sans-serif", 12, "bold italic"))
+        if platform.system() == "Darwin":
+            self.tree.tag_configure("ERR", foreground="#d63031",
+                                    font=("sans-serif", 12, "bold italic"))
+        else:
+            self.tree.tag_configure("ERR",
+                                    font=("sans-serif", 10, "bold italic"))
 
         # Scrollbar
         horizontal_scrollbar = ttk.Scrollbar(
