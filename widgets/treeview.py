@@ -1,12 +1,18 @@
 import platform
 from tkinter import ttk
 
+from common.constants import Content
+
 
 class Treeview:
     """ Display Treeview. """
 
     def __init__(self, master):
         self.pw_header = ttk.Frame(master)
+
+        self.content = Content()
+
+        TREEVIEW = self.content.TREEVIEW
 
         self.tree = ttk.Treeview(self.pw_header, column=(
             "#0", "#01", "#02", "#03", "#04", "#05"), selectmode="none")
@@ -32,12 +38,12 @@ class Treeview:
         self.tree.column("#5", minwidth=60, width=300)
         self.tree.column("#6", width=5)
 
-        self.tree.heading("#0", text="Ancien nom de fichier", anchor="w")
-        self.tree.heading("#1", text="Nouveau nom de fichier", anchor="w")
-        self.tree.heading("#2", text="Taille", anchor="w")
-        self.tree.heading("#3", text="Modifié le", anchor="w")
-        self.tree.heading("#4", text="Créé le", anchor="w")
-        self.tree.heading("#5", text="Emplacement", anchor="w")
+        self.tree.heading("#0", text=TREEVIEW["old_name"], anchor="w")
+        self.tree.heading("#1", text=TREEVIEW["new_name"], anchor="w")
+        self.tree.heading("#2", text=TREEVIEW["size"], anchor="w")
+        self.tree.heading("#3", text=TREEVIEW["modified"], anchor="w")
+        self.tree.heading("#4", text=TREEVIEW["created"], anchor="w")
+        self.tree.heading("#5", text=TREEVIEW["location"], anchor="w")
 
         self.tree.pack(fill="both", expand=True, anchor="n")
         self.pw_header.pack(fill="both", expand=True)

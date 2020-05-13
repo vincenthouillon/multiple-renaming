@@ -7,15 +7,15 @@ Copyright 2020 Vincent Houillon
 GitHub: https://github.com/vincenthouillon/multiple_renaming
 """
 
+import configparser
+import gettext
 import os
 import platform
-import winsound
 from datetime import datetime
 from tkinter import *
 from tkinter.filedialog import askopenfilenames
 
-from common.constants import (ARGUMENTS_DICT, OPTIONS_DICT,
-                              WINDOWS_PROHIBITED_CHAR)
+from common.constants import Content
 from common.modules import Modules
 from widgets.parameters import Parameters
 from widgets.statusbar import StatusBar
@@ -27,6 +27,8 @@ class MultipleRenaming:
     def __init__(self, master):
         self.master = master
         self.configure()
+        self.content = Content()
+        self.load_menu()
         self.load_widgets()
         self.modules = Modules()
 
@@ -41,41 +43,54 @@ class MultipleRenaming:
         img = Image("photo", file=os.path.join("icons", "rename.png"))
         self.master.tk.call("wm", "iconphoto", self.master._w, img)
 
+        # Load and apply settings
+        config = configparser.ConfigParser()
+        config.read(os.path.join("common", "config.cfg"))
+
+        LANG = config["language"]["language"]
+
+    def load_menu(self):
         menu = Menu(self.master)
         self.master.config(menu=menu)
 
         file_menu = Menu(menu, tearoff=False)
 
+        MENU = self.content.MENU
+
         if platform.system() == "Darwin":
             file_menu.add_command(
-                label="Ouvrir", accelerator="Command-O",
+                label=MENU["open"], accelerator="Command-O",
                 underline=0, command=self.open_filenames)
             self.master.bind("<Command-o>", self.open_filenames)
 
             file_menu.add_command(
-                label="Quitter", accelerator="Command-W", command=quit)
+                label=MENU["exit"], accelerator="Command-W", command=quit)
         else:
             file_menu.add_command(
-                label="Ouvrir", accelerator="Ctrl-O",
+                label=MENU["open"], accelerator="Ctrl-O",
                 underline=0, command=self.open_filenames)
             self.master.bind("<Control-o>", self.open_filenames)
 
             file_menu.add_command(
-                label="Quitter", accelerator="Alt-F4", command=quit)
+                label=MENU["exit"], accelerator="Alt-F4", command=quit)
 
-        menu.add_cascade(label="Fichier", menu=file_menu)
+        menu.add_cascade(label=MENU["file"], menu=file_menu)
 
         edit_menu = Menu(menu, tearoff=False)
-        edit_menu.add_command(label="Afficher la licence")
-        edit_menu.add_command(label="A propos")
-        menu.add_cascade(label="Aide", menu=edit_menu)
+        edit_menu.add_command(label=MENU["licence"])
+        edit_menu.add_command(label=MENU["about"])
+        menu.add_cascade(label=MENU["help"], menu=edit_menu)
 
     def load_widgets(self):
-        """ Load widgets and bindings event. """
+        """Load widgets and bindings event."""
         self.treeview = Treeview(self.master)
         self.params = Parameters(self.master)
         self.populate_options()
         # Binding
+        self.treeview.tree.bind(
+            "<Double-Button-1>",
+            lambda event: self.open_filenames())
+
         self.params.cbox_arguments.bind(
             "<<ComboboxSelected>>", self.arguments_callback)
         self.params.sbox_start.bind(
@@ -105,16 +120,14 @@ class MultipleRenaming:
         self.initial_filepath = askopenfilenames()
         self.initial_filenames = list()
 
-        # for basename in self.initial_filepath:
-        #     self.initial_filenames.append(os.path.basename(basename))
-
         for basename in self.initial_filepath:
             self.initial_filenames.append(basename)
 
         self.changed_filenames = self.initial_filenames[:]
 
+        txt = self.content.STATUSBAR["nb_files"]
         self.statusbar.lbl_count_files.config(
-            text=f"{len(self.initial_filenames)} fichier(s) |")
+            text=f"{len(self.initial_filenames)} {txt} |")
         self.display_treeview()
 
     def input_filename(self, P):
@@ -158,17 +171,23 @@ class MultipleRenaming:
                 self.changed_filenames[index] = temp_input + ext
                 counter += int(self.params.sbox_step.get())
 
-            # Name from first character
+            # Name from first character [nX]
             if re.findall(r"\[n\d+\]", user_input):
                 re_findall = re.findall(r"\[n\d+\]", user_input)
                 position = re_findall[0][2:len(re_findall)-2]
 
-                temp_input = temp_input.replace(
-                    re_findall[0], filename[0:int(position)]
-                )
-                self.changed_filenames[index] = temp_input + ext
+                len_dirname = len(os.path.dirname(filename)) + 1
 
-            # Name from last character
+                temp_input = temp_input.replace(
+                    re_findall[0],
+                    filename[len_dirname:len_dirname + int(position)])
+
+                new_filename = os.path.join(os.path.dirname(
+                    filename) + os.path.sep + temp_input)
+
+                self.changed_filenames[index] = new_filename + ext
+
+            # Name from last character [n-X]
             if re.findall(r"\[n-\d+\]", user_input):
                 re_findall = re.findall(r"\[n-\d+\]", user_input)
                 position = re_findall[0][3:len(re_findall)-2]
@@ -177,18 +196,30 @@ class MultipleRenaming:
                 # result = [condition is false, condition is true][condition]
                 nchar = [0, nchar][nchar > 0]
 
+                len_dirname = len(os.path.dirname(filename)) + 1
+
                 temp_input = temp_input.replace(
                     re_findall[0], filename[nchar:])
-                self.changed_filenames[index] = temp_input + ext
 
-            # Name from n character
+                new_filename = os.path.join(os.path.dirname(
+                    filename) + os.path.sep + temp_input)
+
+                self.changed_filenames[index] = new_filename + ext
+
+            # Name from n character [n,X]
             if re.findall(r"\[n,\d+\]", user_input):
                 re_findall = re.findall(r"\[n,\d+\]", user_input)
                 position = re_findall[0][3:len(re_findall)-2]
 
+                len_dirname = len(os.path.dirname(filename)) + 1
+
                 temp_input = temp_input.replace(
-                    re_findall[0], filename[int(position)-1:len(filename)])
-                self.changed_filenames[index] = temp_input + ext
+                    re_findall[0], filename[len_dirname + int(position):])
+
+                new_filename = os.path.join(os.path.dirname(
+                    filename) + os.path.sep + temp_input)
+
+                self.changed_filenames[index] = new_filename + ext
 
         self.display_treeview()
         return True
@@ -219,7 +250,7 @@ class MultipleRenaming:
             extension_initial = os.path.splitext(basename_initial)[1]
 
             # Get the key from the arguments list
-            for key, value in ARGUMENTS_DICT.items():
+            for key, value in self.content.ARGUMENTS_DICT.items():
                 if self.params.cbox_arguments.get() in value:
                     arg_key = key
 
@@ -231,19 +262,13 @@ class MultipleRenaming:
 
             new_filename = os.path.join(dirname_initial, modified)
 
-            try:
-                os.rename(initial, modified)
-            except OSError:
-                print(
-                    "Erreur", "La syntaxe du nom de fichier est incorrecte")
-                break
+            os.rename(initial, modified)
 
             # Convert tuple to list.
             self.initial_filenames = list(self.initial_filenames)
 
             # Update renamed file
             self.initial_filenames[index] = modified
-     
 
         self.display_treeview()
         self.params.entry_filename.focus()
@@ -319,18 +344,19 @@ class MultipleRenaming:
 
     def check_valid_characters_filename(self, name_modified):
         """Checks that the file name does not contain characters 
-        prohibited by Windows
+        prohibited by Microsoft Windows
 
         Arguments:
             name_modified {str} -- Filename
         """
 
-        for char in WINDOWS_PROHIBITED_CHAR:
+        from winsound import PlaySound, SND_ASYNC
+
+        for char in self.content.WINDOWS_PROHIBITED_CHAR:
             if char in name_modified:
                 self.statusbar.lbl_alert.config(
-                    text="Un nom de fichier ne peut pas contenir les caractères"
-                    " suivants : \ / : * ? \" < > |")
-                winsound.PlaySound("SystemAsterisk", winsound.SND_ASYNC)
+                    text=self.content.STATUSBAR["alert"])
+                PlaySound("SystemAsterisk", SND_ASYNC)
                 self.activate_button(False)
                 break
             else:
@@ -338,13 +364,13 @@ class MultipleRenaming:
                 self.activate_button()
 
     def arguments_callback(self, event):
-        for key, value in ARGUMENTS_DICT.items():
+        for key, value in self.content.ARGUMENTS_DICT.items():
             if self.params.cbox_arguments.get() in value:
                 self.display_treeview(key)
 
     def populate_options(self):
         entry = self.params.entry_filename
-        for key, value in OPTIONS_DICT.items():
+        for key, value in self.content.OPTIONS_DICT.items():
             self.params.mb.menu.add_command(
                 label=value,
                 command=lambda k=key: entry.insert(entry.index(INSERT), k)

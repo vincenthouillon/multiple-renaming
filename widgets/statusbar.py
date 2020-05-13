@@ -1,10 +1,16 @@
 from tkinter import ttk
 
+from common.constants import Content
+
 
 class StatusBar:
     """ Display a satusbar. """
 
     def __init__(self, master):
+        self.content = Content()
+
+        txt = "0 " + self.content.STATUSBAR["nb_files"] + " |"
+
         self.frm_status = ttk.Frame(master, relief="sunken")
         self.frm_status.pack(fill="x")
 
@@ -12,7 +18,7 @@ class StatusBar:
         self.row_status.pack(fill="x")
 
         self.lbl_count_files = ttk.Label(
-            self.row_status, text="0 fichier(s) |")
+            self.row_status, text=txt)
         self.lbl_count_files.pack(side="left")
 
         self.lbl_alert = ttk.Label(
