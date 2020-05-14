@@ -1,10 +1,12 @@
-
+import configparser
+import os
+import sys
 from datetime import datetime
 
 
 class Modules:
 
-    def get_human_readable_size(self, size, precision=2):
+    def get_human_readable_size(self, size, precision=0):
         """Convert n bytes into a human readable string based on format.
 
         Arguments:
@@ -78,3 +80,16 @@ class Modules:
         if "ss" in date_format:
             date_format = date_format.replace("ss", now.strftime("%S"))
         return date_format
+
+    def set_language(self, lng):
+        config = configparser.ConfigParser()
+
+        config.read("src/config.cfg")
+        config["language"]["language"] = lng
+
+        with open("src/config.cfg", "w") as configfile:
+            config.write(configfile)
+
+        # Restart app
+        python = sys.executable
+        os.execl(python, python, * sys.argv)

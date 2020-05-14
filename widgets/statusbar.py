@@ -1,15 +1,15 @@
 from tkinter import ttk
 
-from common.constants import Content
+from src.display import Display
 
 
 class StatusBar:
     """ Display a satusbar. """
 
     def __init__(self, master):
-        self.content = Content()
+        self.display = Display()
 
-        txt = "0 " + self.content.STATUSBAR["nb_files"] + " |"
+        txt = "0 " + self.display.STATUSBAR["nb_files"] + " |"
 
         self.frm_status = ttk.Frame(master, relief="sunken")
         self.frm_status.pack(fill="x")

@@ -1,7 +1,8 @@
 import platform
 from tkinter import ttk
 
-from common.constants import Content
+# from src.constants import Content
+from src.display import Display
 
 
 class Treeview:
@@ -10,9 +11,9 @@ class Treeview:
     def __init__(self, master):
         self.pw_header = ttk.Frame(master)
 
-        self.content = Content()
+        self.display = Display()
 
-        TREEVIEW = self.content.TREEVIEW
+        TREEVIEW = self.display.TREEVIEW
 
         self.tree = ttk.Treeview(self.pw_header, column=(
             "#0", "#01", "#02", "#03", "#04", "#05"), selectmode="none")

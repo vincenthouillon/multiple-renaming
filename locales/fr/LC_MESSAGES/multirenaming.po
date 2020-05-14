@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Multiple renaming 1.0\n"
-"POT-Creation-Date: 2020-05-12 20:46+0200\n"
-"PO-Revision-Date: 2020-05-12 20:51+0200\n"
+"POT-Creation-Date: 2020-05-13 20:02+0200\n"
+"PO-Revision-Date: 2020-05-13 20:03+0200\n"
 "Last-Translator: Vincent Houillon <https://github.com/vincenthouillon/"
 "multiple_renaming>\n"
 "Language-Team: French\n"
@@ -15,175 +15,178 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: common/constants.py:13
+#: common/constants.py:15
 msgid "No change"
 msgstr "Pas de changement"
 
-#: common/constants.py:14
+#: common/constants.py:16
 msgid "Name in lowercase"
 msgstr "Nom du fichier en minuscules"
 
-#: common/constants.py:15
+#: common/constants.py:17
 msgid "Name in uppercase"
 msgstr "Nom de fichier en majuscules"
 
-#: common/constants.py:16
+#: common/constants.py:18
 msgid "Extension lowercase"
 msgstr "Extension en minuscules"
 
-#: common/constants.py:17
+#: common/constants.py:19
 msgid "Extension uppercase"
 msgstr "Extension en majuscules"
 
-#: common/constants.py:18
+#: common/constants.py:20
 msgid "All in lowercase"
 msgstr "Tout en minuscules"
 
-#: common/constants.py:19
+#: common/constants.py:21
 msgid "All in uppercase"
 msgstr "Tout en majuscules"
 
-#: common/constants.py:20
+#: common/constants.py:22
 msgid "First letter of each word lowercase"
 msgstr "Première lettre de chaque mot en minuscules"
 
-#: common/constants.py:21
+#: common/constants.py:23
 msgid "First letter of each word uppercase"
 msgstr "Première lettre de chaque mot en majuscules"
 
-#: common/constants.py:25
+#: common/constants.py:27
 msgid "Name [n]"
 msgstr "Nom [n]"
 
-#: common/constants.py:26
+#: common/constants.py:28
 msgid "Name - first x characters [nx]"
 msgstr "Nom - premiers caractères x [nx]"
 
-#: common/constants.py:27
+#: common/constants.py:29
 msgid "Name - last x characters [n-x]"
 msgstr "Nom - derniers caractères x [n-x]"
 
-#: common/constants.py:28
+#: common/constants.py:30
 msgid "Name from x [n,x]"
 msgstr "Nom - à partir de x [n,x]"
 
-#: common/constants.py:29
+#: common/constants.py:31
 msgid "Counter [c]"
 msgstr "Compteur [c]"
 
-#: common/constants.py:30
+#: common/constants.py:32
 msgid "Date - current [d]"
 msgstr "Date - actuelle [d]"
 
-#: common/constants.py:55
+#: common/constants.py:57
 msgid "Old name"
 msgstr "Ancien nom de fichier"
 
-#: common/constants.py:56
+#: common/constants.py:58
 msgid "New name"
 msgstr "Nouveau nom de fichier"
 
-#: common/constants.py:57
+#: common/constants.py:59
 msgid "Size"
 msgstr "Taille"
 
-#: common/constants.py:58
+#: common/constants.py:60
 msgid "Date modified"
 msgstr "Modifié le"
 
-#: common/constants.py:59
+#: common/constants.py:61
 msgid "Date created"
 msgstr "Créé le"
 
-#: common/constants.py:60
+#: common/constants.py:62
 msgid "Location"
 msgstr "Emplacement"
 
-#: common/constants.py:64
+#: common/constants.py:66
 msgid "Open"
 msgstr "Ouvrir"
 
-#: common/constants.py:65
+#: common/constants.py:67
 msgid "Exit"
 msgstr "Quitter"
 
-#: common/constants.py:66
+#: common/constants.py:68
 msgid "File"
 msgstr "Fichier"
 
-#: common/constants.py:67
-msgid "Show license"
-msgstr "Afficher la licence"
+#: common/constants.py:69
+msgid "Website"
+msgstr "Site internet"
 
-#: common/constants.py:68
+#: common/constants.py:70
 msgid "About"
 msgstr "A propos"
 
-#: common/constants.py:69
+#: common/constants.py:71
 msgid "Help"
 msgstr "Aide"
 
-#: common/constants.py:73
+#: common/constants.py:75
 msgid "Method"
 msgstr "Méthode"
 
-#: common/constants.py:74
+#: common/constants.py:76
 msgid "File name:"
 msgstr "Nom de fichier :"
 
-#: common/constants.py:75
+#: common/constants.py:77
 msgid "Arguments:"
 msgstr "Arguments :"
 
-#: common/constants.py:76
+#: common/constants.py:78
 msgid "Search and replace"
 msgstr "Chercher et remplacer"
 
-#: common/constants.py:77
+#: common/constants.py:79
 msgid "Search:"
 msgstr "Recherche :"
 
-#: common/constants.py:78
+#: common/constants.py:80
 msgid "Replace:"
 msgstr "Remplacer :"
 
-#: common/constants.py:79
+#: common/constants.py:81
 msgid "Counter"
 msgstr "Compteur"
 
-#: common/constants.py:80
+#: common/constants.py:82
 msgid "Start at:"
 msgstr "Démarrer à :"
 
-#: common/constants.py:81
+#: common/constants.py:83
 msgid "Step by:"
 msgstr "Pas :"
 
-#: common/constants.py:82
+#: common/constants.py:84
 msgid "Digits:"
 msgstr "Nombre de chiffre :"
 
-#: common/constants.py:83
+#: common/constants.py:85
 msgid "Timestamp format"
 msgstr "Format date/heure"
 
-#: common/constants.py:84
+#: common/constants.py:86
 msgid "Rename"
 msgstr "Renommer"
 
-#: common/constants.py:85
+#: common/constants.py:87
 msgid "Close after rename"
 msgstr "Fermer après renommage"
 
-#: common/constants.py:89
+#: common/constants.py:91
 msgid "file(s)"
 msgstr "fichier(s)"
 
-#: common/constants.py:90
+#: common/constants.py:92
 msgid "A file name cannot contain the following characters: \\ /: *? \"<> |"
 msgstr ""
 "Un nom de fichier ne peut pas contenir les caractères suivants : \\ / : * ? "
 "\\ » < > |"
+
+#~ msgid "Show license"
+#~ msgstr "Afficher la licence"
 
 #~ msgid "Pas de changement"
 #~ msgstr "No change"

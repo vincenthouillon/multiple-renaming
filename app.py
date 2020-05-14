@@ -1,85 +1,113 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-"""
-Copyright 2020 Vincent Houillon
+"""Multiple Renaming
 
-GitHub: https://github.com/vincenthouillon/multiple_renaming
+File renaming application written in Python and using
+only the standard library.
+
+Program tested on Windows 10 and macOS Catalina with the
+following Python versions:
+
+- Python 3.7.4
+- Python 3.8.2
 """
 
 import configparser
-import gettext
 import os
 import platform
+import re
+import sys
+import webbrowser
 from datetime import datetime
-from tkinter import *
+from tkinter import INSERT, Image, Menu, Tk
 from tkinter.filedialog import askopenfilenames
 
-from common.constants import Content
-from common.modules import Modules
+from src.display import Display
+from src.modules import Modules
 from widgets.parameters import Parameters
 from widgets.statusbar import StatusBar
 from widgets.treeview import Treeview
 
+__author__ = "Vincent Houillon"
+__website__ = "https: //github.com/vincenthouillon/multiple_renaming"
+__version__ = "1.0"
+
 
 class MultipleRenaming:
+    """Application to rename files."""
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, master):
         self.master = master
         self.configure()
-        self.content = Content()
         self.load_menu()
         self.load_widgets()
         self.modules = Modules()
 
         self.initial_filenames = list()
         self.changed_filenames = list()
+        self.initial_filepath = list()
 
     def configure(self):
+        """Definition of the title, size and icon of the application."""
+        # pylint: disable=protected-access
         self.master.title("Renommage Multiple")
         self.master.minsize(700, 540)
         self.master.geometry("700x540")
 
-        img = Image("photo", file=os.path.join("icons", "rename.png"))
+        img = Image("photo", file=os.path.join("icons", "icon.png"))
         self.master.tk.call("wm", "iconphoto", self.master._w, img)
 
         # Load and apply settings
         config = configparser.ConfigParser()
-        config.read(os.path.join("common", "config.cfg"))
+        config.read(os.path.join("src", "config.cfg"))
+        lng = config["language"]["language"]
 
-        LANG = config["language"]["language"]
+        Display.set_language(lng)
+        self.display = Display()
 
     def load_menu(self):
+        """Setting toolbar."""
         menu = Menu(self.master)
         self.master.config(menu=menu)
 
         file_menu = Menu(menu, tearoff=False)
 
-        MENU = self.content.MENU
+        toolbar = self.display.TOOLBAR
 
         if platform.system() == "Darwin":
             file_menu.add_command(
-                label=MENU["open"], accelerator="Command-O",
+                label=toolbar["open"], accelerator="Command-O",
                 underline=0, command=self.open_filenames)
             self.master.bind("<Command-o>", self.open_filenames)
 
             file_menu.add_command(
-                label=MENU["exit"], accelerator="Command-W", command=quit)
+                label=toolbar["exit"], accelerator="Command-W", command=quit)
         else:
             file_menu.add_command(
-                label=MENU["open"], accelerator="Ctrl-O",
+                label=toolbar["open"], accelerator="Ctrl-O",
                 underline=0, command=self.open_filenames)
             self.master.bind("<Control-o>", self.open_filenames)
 
             file_menu.add_command(
-                label=MENU["exit"], accelerator="Alt-F4", command=quit)
+                label=toolbar["exit"], accelerator="Alt-F4", command=quit)
 
-        menu.add_cascade(label=MENU["file"], menu=file_menu)
+        menu.add_cascade(label=toolbar["file"], menu=file_menu)
+
+        lang_menu = Menu(menu, tearoff=False)
+        lang_menu.add_command(
+            label="French", command=lambda: self.modules.set_language("fr"))
+        lang_menu.add_command(
+            label="English", command=lambda: self.modules.set_language("en"))
+        menu.add_cascade(label="language", menu=lang_menu)
 
         edit_menu = Menu(menu, tearoff=False)
-        edit_menu.add_command(label=MENU["licence"])
-        edit_menu.add_command(label=MENU["about"])
-        menu.add_cascade(label=MENU["help"], menu=edit_menu)
+        edit_menu.add_command(label=toolbar["website"],
+                              command=lambda: webbrowser.open(__website__))
+        edit_menu.add_command(label=toolbar["about"],
+                              command=lambda: self.modules.set_language("fr"))
+        menu.add_cascade(label=toolbar["help"], menu=edit_menu)
 
     def load_widgets(self):
         """Load widgets and bindings event."""
@@ -117,6 +145,7 @@ class MultipleRenaming:
         self.params.btn_rename.config(command=self.rename)
 
     def open_filenames(self):
+        """Open files and display the number in the status bar."""
         self.initial_filepath = askopenfilenames()
         self.initial_filenames = list()
 
@@ -125,7 +154,7 @@ class MultipleRenaming:
 
         self.changed_filenames = self.initial_filenames[:]
 
-        txt = self.content.STATUSBAR["nb_files"]
+        txt = self.display.STATUSBAR["nb_files"]
         self.statusbar.lbl_count_files.config(
             text=f"{len(self.initial_filenames)} {txt} |")
         self.display_treeview()
@@ -140,6 +169,8 @@ class MultipleRenaming:
         Returns:
             str -- Output text processed by application rules
         """
+        # pylint: disable=invalid-name
+        # pylint: disable=too-many-locals
 
         user_input = P
 
@@ -149,8 +180,8 @@ class MultipleRenaming:
         if platform.system() == "Windows":
             self.check_valid_characters_filename(user_input)
 
-        for index, (initial, changed) in enumerate(
-                zip(self.initial_filenames, self.changed_filenames)):
+        for index, initial in enumerate(self.initial_filenames):
+
             filename, ext = os.path.splitext(initial)
 
             if "[n]" in user_input:
@@ -225,6 +256,13 @@ class MultipleRenaming:
         return True
 
     def search_and_replace(self, event):
+        """Search and replace function.
+
+        Arguments:
+            event {dict} -- Bind event.
+        """
+        # pylint: disable=unused-argument
+
         search_expr = self.params.entry_search.get()
         replace_expr = self.params.entry_replace.get()
 
@@ -242,15 +280,14 @@ class MultipleRenaming:
         self.display_treeview()
 
     def rename(self):
-        """Renaming files."""
+        """Execute file renaming."""
         for index, (initial, modified) in enumerate(zip(self.initial_filenames,
                                                         self.changed_filenames)):
-            dirname_initial = os.path.dirname(initial)
             basename_initial = os.path.basename(initial)
             extension_initial = os.path.splitext(basename_initial)[1]
 
             # Get the key from the arguments list
-            for key, value in self.content.ARGUMENTS_DICT.items():
+            for key, value in self.display.ARGUMENTS_DICT.items():
                 if self.params.cbox_arguments.get() in value:
                     arg_key = key
 
@@ -259,8 +296,6 @@ class MultipleRenaming:
                 arg_key,
                 os.path.splitext(modified)[0],
                 extension_initial)
-
-            new_filename = os.path.join(dirname_initial, modified)
 
             os.rename(initial, modified)
 
@@ -274,7 +309,7 @@ class MultipleRenaming:
         self.params.entry_filename.focus()
 
         if self.params.check_var.get():
-            quit()
+            sys.exit()
 
     def display_treeview(self, argument=None):
         """Management of the display of the treeview.
@@ -283,6 +318,10 @@ class MultipleRenaming:
             argument {int} -- Key to the arguments, to transform text into
             capital letters for example. (default: {None})
         """
+        # pylint: disable=consider-using-set-comprehension
+        # pylint: disable=unnecessary-comprehension
+        # pylint: disable=no-else-break
+        # pylint: disable=no-else-continue
 
         # Delete treeview content
         self.treeview.tree.delete(*self.treeview.tree.get_children())
@@ -315,7 +354,7 @@ class MultipleRenaming:
                 [x for x in self.changed_filenames
                  if self.changed_filenames.count(x) > 1])
 
-            if name_modified in [x for x in duplicate_files]:
+            if changed in [x for x in duplicate_files]:
                 self.treeview.tree.insert(
                     "", "end",
                     text=old_name,
@@ -323,7 +362,6 @@ class MultipleRenaming:
                             date_modified_formated, location), tag="ERR")
                 self.activate_button(False)
                 continue
-
             else:
                 self.treeview.tree.insert(
                     "", "end",
@@ -343,19 +381,22 @@ class MultipleRenaming:
             self.params.btn_rename.config(state="disabled")
 
     def check_valid_characters_filename(self, name_modified):
-        """Checks that the file name does not contain characters 
-        prohibited by Microsoft Windows
+        """Checks that the file name does not contain characters
+        prohibited by Microsoft Windows.
 
         Arguments:
             name_modified {str} -- Filename
         """
+        # pylint: disable=import-outside-toplevel
+        # pylint: disable=no-else-break
+        # pylint: disable=import-error
 
         from winsound import PlaySound, SND_ASYNC
 
-        for char in self.content.WINDOWS_PROHIBITED_CHAR:
+        for char in self.display.WINDOWS_PROHIBITED_CHAR:
             if char in name_modified:
                 self.statusbar.lbl_alert.config(
-                    text=self.content.STATUSBAR["alert"])
+                    text=self.display.STATUSBAR["alert"])
                 PlaySound("SystemAsterisk", SND_ASYNC)
                 self.activate_button(False)
                 break
@@ -364,14 +405,22 @@ class MultipleRenaming:
                 self.activate_button()
 
     def arguments_callback(self, event):
-        for key, value in self.content.ARGUMENTS_DICT.items():
+        """Application of argument functions.
+
+        Arguments:
+            event {dict} -- Bind event
+        """
+        # pylint: disable=unused-argument
+
+        for key, value in self.display.ARGUMENTS_DICT.items():
             if self.params.cbox_arguments.get() in value:
                 self.display_treeview(key)
 
     def populate_options(self):
+        """Filled the options menu."""
         entry = self.params.entry_filename
-        for key, value in self.content.OPTIONS_DICT.items():
-            self.params.mb.menu.add_command(
+        for key, value in self.display.OPTIONS_DICT.items():
+            self.params.menu_btn.menu.add_command(
                 label=value,
                 command=lambda k=key: entry.insert(entry.index(INSERT), k)
             )

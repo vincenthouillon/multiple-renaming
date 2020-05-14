@@ -1,22 +1,24 @@
-from tkinter import *
-from tkinter import ttk
+from tkinter import BOTH, LEFT, RIGHT, TOP, Frame, IntVar, Menu, W, X, ttk
 
-from common.constants import Content
+from src.display import Display
 
 
 class Parameters:
+    """ Display parameters section. """
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=invalid-name
+    # pylint: disable=too-few-public-methods
+
     def __init__(self, master):
-        """ Display parameters section. """
         self.frame = Frame(master)
-        self.content = Content()
+        self.display = Display()
 
         self.parameters = ttk.Frame(self.frame, padding=(0, 10, 0, 0))
 
         # CONSTANTS
-        ARGUMENTS = self.content.ARGUMENTS_DICT
-        OPTIONS = self.content.OPTIONS_DICT
-        DATE_FORMAT = self.content.DATE_FORMAT_LIST
-        PARAMS = self.content.PARAMETERS
+        ARGUMENTS = self.display.ARGUMENTS_DICT
+        DATE_FORMAT = self.display.DATE_FORMAT_LIST
+        PARAMS = self.display.PARAMETERS
 
         # --- SETTINGS CONTENT
         self.left_panel = ttk.Frame(self.parameters)
@@ -38,10 +40,10 @@ class Parameters:
         self.entry_filename.pack(
             anchor=W, side=LEFT, padx=5, fill=X, expand=True)
 
-        self.mb = ttk.Menubutton(self.method_row_01, text="⚙️")
-        self.mb.pack()
-        self.mb.menu = Menu(self.mb, tearoff=False)
-        self.mb["menu"] = self.mb.menu
+        self.menu_btn = ttk.Menubutton(self.method_row_01, text="⚙️")
+        self.menu_btn.pack()
+        self.menu_btn.menu = Menu(self.menu_btn, tearoff=False)
+        self.menu_btn["menu"] = self.menu_btn.menu
         # endregion: Row 01
 
         # Row 02
