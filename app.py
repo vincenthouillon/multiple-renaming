@@ -30,7 +30,7 @@ from widgets.statusbar import StatusBar
 from widgets.treeview import Treeview
 
 __author__ = "Vincent Houillon"
-__website__ = "https: //github.com/vincenthouillon/multiple_renaming"
+__website__ = r"https://github.com/vincenthouillon/multiple_renaming"
 __version__ = "1.0"
 
 
@@ -100,13 +100,12 @@ class MultipleRenaming:
             label="French", command=lambda: self.modules.set_language("fr"))
         lang_menu.add_command(
             label="English", command=lambda: self.modules.set_language("en"))
-        menu.add_cascade(label="language", menu=lang_menu)
+        menu.add_cascade(label="Language", menu=lang_menu)
 
         edit_menu = Menu(menu, tearoff=False)
         edit_menu.add_command(label=toolbar["website"],
                               command=lambda: webbrowser.open(__website__))
-        edit_menu.add_command(label=toolbar["about"],
-                              command=lambda: self.modules.set_language("fr"))
+        edit_menu.add_command(label=toolbar["about"])
         menu.add_cascade(label=toolbar["help"], menu=edit_menu)
 
     def load_widgets(self):
@@ -169,8 +168,7 @@ class MultipleRenaming:
         Returns:
             str -- Output text processed by application rules
         """
-        # pylint: disable=invalid-name
-        # pylint: disable=too-many-locals
+        # pylint: disable=invalid-name, disable=too-many-locals
 
         user_input = P
 
@@ -181,25 +179,28 @@ class MultipleRenaming:
             self.check_valid_characters_filename(user_input)
 
         for index, initial in enumerate(self.initial_filenames):
-
-            filename, ext = os.path.splitext(initial)
+            dirname, filename = os.path.split(initial)
+            filename, ext = os.path.splitext(filename)
 
             if "[n]" in user_input:
                 temp_input = user_input.replace("[n]", filename)
-                self.changed_filenames[index] = temp_input + ext
+                new_path = os.path.join(dirname, temp_input + ext)
+                self.changed_filenames[index] = new_path
             else:
                 temp_input = user_input
-                self.changed_filenames[index] = user_input + ext
+                new_path = os.path.join(dirname, temp_input + ext)
+                self.changed_filenames[index] = new_path
 
             if "[d]" in user_input:
-                filename, ext = os.path.splitext(initial)
                 temp_input = temp_input.replace("[d]", date_format)
-                self.changed_filenames[index] = temp_input + ext
+                new_path = os.path.join(dirname, temp_input + ext)
+                self.changed_filenames[index] = new_path
 
             if "[c]" in user_input:
                 formated_counter = f"{counter:0{self.params.sbox_len.get()}}"
                 temp_input = temp_input.replace("[c]", formated_counter)
-                self.changed_filenames[index] = temp_input + ext
+                new_path = os.path.join(dirname, temp_input + ext)
+                self.changed_filenames[index] = new_path
                 counter += int(self.params.sbox_step.get())
 
             # Name from first character [nX]
@@ -207,16 +208,15 @@ class MultipleRenaming:
                 re_findall = re.findall(r"\[n\d+\]", user_input)
                 position = re_findall[0][2:len(re_findall)-2]
 
-                len_dirname = len(os.path.dirname(filename)) + 1
+                len_dirname = len(os.path.dirname(filename))
 
                 temp_input = temp_input.replace(
                     re_findall[0],
                     filename[len_dirname:len_dirname + int(position)])
 
-                new_filename = os.path.join(os.path.dirname(
-                    filename) + os.path.sep + temp_input)
+                new_filename = os.path.join(dirname + os.sep +temp_input + ext)
 
-                self.changed_filenames[index] = new_filename + ext
+                self.changed_filenames[index] = new_filename
 
             # Name from last character [n-X]
             if re.findall(r"\[n-\d+\]", user_input):
@@ -232,25 +232,23 @@ class MultipleRenaming:
                 temp_input = temp_input.replace(
                     re_findall[0], filename[nchar:])
 
-                new_filename = os.path.join(os.path.dirname(
-                    filename) + os.path.sep + temp_input)
+                new_filename = os.path.join(dirname + os.sep +temp_input + ext)
 
-                self.changed_filenames[index] = new_filename + ext
+                self.changed_filenames[index] = new_filename
 
             # Name from n character [n,X]
             if re.findall(r"\[n,\d+\]", user_input):
                 re_findall = re.findall(r"\[n,\d+\]", user_input)
                 position = re_findall[0][3:len(re_findall)-2]
 
-                len_dirname = len(os.path.dirname(filename)) + 1
+                len_dirname = len(os.path.dirname(filename))
 
                 temp_input = temp_input.replace(
                     re_findall[0], filename[len_dirname + int(position):])
 
-                new_filename = os.path.join(os.path.dirname(
-                    filename) + os.path.sep + temp_input)
+                new_filename = os.path.join(dirname + os.sep +temp_input + ext)
 
-                self.changed_filenames[index] = new_filename + ext
+                self.changed_filenames[index] = new_filename
 
         self.display_treeview()
         return True
@@ -283,6 +281,7 @@ class MultipleRenaming:
         """Execute file renaming."""
         for index, (initial, modified) in enumerate(zip(self.initial_filenames,
                                                         self.changed_filenames)):
+            dirname = os.path.dirname(initial)
             basename_initial = os.path.basename(initial)
             extension_initial = os.path.splitext(basename_initial)[1]
 
@@ -297,13 +296,13 @@ class MultipleRenaming:
                 os.path.splitext(modified)[0],
                 extension_initial)
 
-            os.rename(initial, modified)
+            os.rename(initial, os.path.join(dirname, modified))
 
             # Convert tuple to list.
             self.initial_filenames = list(self.initial_filenames)
 
             # Update renamed file
-            self.initial_filenames[index] = modified
+            self.initial_filenames[index] = os.path.join(dirname, modified)
 
         self.display_treeview()
         self.params.entry_filename.focus()
@@ -318,10 +317,8 @@ class MultipleRenaming:
             argument {int} -- Key to the arguments, to transform text into
             capital letters for example. (default: {None})
         """
-        # pylint: disable=consider-using-set-comprehension
-        # pylint: disable=unnecessary-comprehension
-        # pylint: disable=no-else-break
-        # pylint: disable=no-else-continue
+        # pylint: disable=consider-using-set-comprehension, unnecessary-comprehension
+        # pylint: disable=no-else-break, no-else-continue
 
         # Delete treeview content
         self.treeview.tree.delete(*self.treeview.tree.get_children())
@@ -330,7 +327,6 @@ class MultipleRenaming:
                 self.initial_filenames, self.changed_filenames):
 
             old_name = os.path.basename(initial)
-            # new_name = os.path.basename(changed)
             new_name, ext = os.path.splitext(os.path.basename(changed))
 
             name_modified = self.modules.arguments_parsing(
@@ -348,6 +344,10 @@ class MultipleRenaming:
 
             size = self.modules.get_human_readable_size(
                 os.path.getsize(initial))
+
+            # Find an empty name and disable button "rename"
+            if len(os.path.splitext(name_modified)[1]) <=0:
+                self.activate_button(False)
 
             # Find duplicate files
             duplicate_files = set(
@@ -387,9 +387,8 @@ class MultipleRenaming:
         Arguments:
             name_modified {str} -- Filename
         """
-        # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel, disable=import-error
         # pylint: disable=no-else-break
-        # pylint: disable=import-error
 
         from winsound import PlaySound, SND_ASYNC
 

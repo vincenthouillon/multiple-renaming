@@ -5,6 +5,8 @@ import gettext
 
 
 class Display:
+    """Returns all the translated text displayed in the application."""
+    # pylint: disable=undefined-variable
 
     @classmethod
     def set_language(cls, lng):

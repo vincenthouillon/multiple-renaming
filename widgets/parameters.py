@@ -5,9 +5,8 @@ from src.display import Display
 
 class Parameters:
     """ Display parameters section. """
-    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-instance-attributes, too-few-public-methods
     # pylint: disable=invalid-name
-    # pylint: disable=too-few-public-methods
 
     def __init__(self, master):
         self.frame = Frame(master)
