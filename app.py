@@ -31,7 +31,7 @@ from widgets.treeview import Treeview
 
 __author__ = "Vincent Houillon"
 __website__ = r"https://github.com/vincenthouillon/multiple_renaming"
-__version__ = "1.0"
+__version__ = "0.8"
 
 
 class MultipleRenaming:
@@ -48,11 +48,12 @@ class MultipleRenaming:
         self.initial_filenames = list()
         self.changed_filenames = list()
         self.initial_filepath = list()
+        self.replace_filename = list()
 
     def configure(self):
         """Definition of the title, size and icon of the application."""
         # pylint: disable=protected-access
-        self.master.title("Renommage Multiple")
+        self.master.title("Multiple Renaming")
         self.master.minsize(700, 540)
         self.master.geometry("700x540")
 
@@ -97,9 +98,11 @@ class MultipleRenaming:
 
         lang_menu = Menu(menu, tearoff=False)
         lang_menu.add_command(
-            label="French", command=lambda: self.modules.set_language("fr"))
+            label=toolbar["french"],
+            command=lambda: self.modules.set_language("fr"))
         lang_menu.add_command(
-            label="English", command=lambda: self.modules.set_language("en"))
+            label=toolbar["english"],
+            command=lambda: self.modules.set_language("en"))
         menu.add_cascade(label="Language", menu=lang_menu)
 
         edit_menu = Menu(menu, tearoff=False)
@@ -131,11 +134,15 @@ class MultipleRenaming:
 
         self.params.entry_search.bind(
             "<KeyRelease>", self.search_and_replace)
+        self.params.entry_search.bind(
+            "<FocusIn>", self.search_and_replace)
 
         self.params.entry_replace.bind(
             "<KeyRelease>", self.search_and_replace)
         self.params.entry_replace.bind(
             "<KeyRelease BackSpace>", self.search_and_replace)
+        self.params.entry_replace.bind(
+            "<FocusIn>", self.search_and_replace)
 
         self.valid = self.params.frame.register(self.input_filename)
         self.params.entry_filename.config(
@@ -152,6 +159,7 @@ class MultipleRenaming:
             self.initial_filenames.append(basename)
 
         self.changed_filenames = self.initial_filenames[:]
+        self.replace_filename = self.initial_filenames[:]
 
         txt = self.display.STATUSBAR["nb_files"]
         self.statusbar.lbl_count_files.config(
@@ -169,6 +177,7 @@ class MultipleRenaming:
             str -- Output text processed by application rules
         """
         # pylint: disable=invalid-name, disable=too-many-locals
+        # pylint: disable=too-many-statements
 
         user_input = P
 
@@ -214,7 +223,8 @@ class MultipleRenaming:
                     re_findall[0],
                     filename[len_dirname:len_dirname + int(position)])
 
-                new_filename = os.path.join(dirname + os.sep +temp_input + ext)
+                new_filename = os.path.join(
+                    dirname + os.sep + temp_input + ext)
 
                 self.changed_filenames[index] = new_filename
 
@@ -232,7 +242,8 @@ class MultipleRenaming:
                 temp_input = temp_input.replace(
                     re_findall[0], filename[nchar:])
 
-                new_filename = os.path.join(dirname + os.sep +temp_input + ext)
+                new_filename = os.path.join(
+                    dirname + os.sep + temp_input + ext)
 
                 self.changed_filenames[index] = new_filename
 
@@ -246,9 +257,12 @@ class MultipleRenaming:
                 temp_input = temp_input.replace(
                     re_findall[0], filename[len_dirname + int(position):])
 
-                new_filename = os.path.join(dirname + os.sep +temp_input + ext)
+                new_filename = os.path.join(
+                    dirname + os.sep + temp_input + ext)
 
                 self.changed_filenames[index] = new_filename
+
+        self.replace_filename = self.changed_filenames[:]
 
         self.display_treeview()
         return True
@@ -268,13 +282,13 @@ class MultipleRenaming:
             self.check_valid_characters_filename(replace_expr)
 
         if len(search_expr) > 0:
-            self.changed_filenames = self.initial_filenames[:]
-            for index, word in enumerate(self.initial_filenames):
+            self.changed_filenames = self.replace_filename[:]
+            for index, word in enumerate(self.replace_filename):
                 if search_expr in word:
                     self.changed_filenames[index] = word.replace(
                         search_expr, replace_expr)
         else:
-            self.changed_filenames = self.initial_filenames[:]
+            self.changed_filenames = self.replace_filename[:]
         self.display_treeview()
 
     def rename(self):
@@ -346,7 +360,7 @@ class MultipleRenaming:
                 os.path.getsize(initial))
 
             # Find an empty name and disable button "rename"
-            if len(os.path.splitext(name_modified)[1]) <=0:
+            if len(os.path.splitext(name_modified)[1]) <= 0:
                 self.activate_button(False)
 
             # Find duplicate files

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Multiple renaming 1.0\n"
-"POT-Creation-Date: 2020-05-13 20:02+0200\n"
-"PO-Revision-Date: 2020-05-13 20:03+0200\n"
+"POT-Creation-Date: 2020-05-17 10:07+0200\n"
+"PO-Revision-Date: 2020-05-17 10:08+0200\n"
 "Last-Translator: Vincent Houillon <https://github.com/vincenthouillon/"
 "multiple_renaming>\n"
 "Language-Team: French\n"
@@ -15,171 +15,179 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: common/constants.py:15
+#: src/display.py:23
 msgid "No change"
 msgstr "Pas de changement"
 
-#: common/constants.py:16
+#: src/display.py:24
 msgid "Name in lowercase"
 msgstr "Nom du fichier en minuscules"
 
-#: common/constants.py:17
+#: src/display.py:25
 msgid "Name in uppercase"
 msgstr "Nom de fichier en majuscules"
 
-#: common/constants.py:18
+#: src/display.py:26
 msgid "Extension lowercase"
 msgstr "Extension en minuscules"
 
-#: common/constants.py:19
+#: src/display.py:27
 msgid "Extension uppercase"
 msgstr "Extension en majuscules"
 
-#: common/constants.py:20
+#: src/display.py:28
 msgid "All in lowercase"
 msgstr "Tout en minuscules"
 
-#: common/constants.py:21
+#: src/display.py:29
 msgid "All in uppercase"
 msgstr "Tout en majuscules"
 
-#: common/constants.py:22
+#: src/display.py:30
 msgid "First letter of each word lowercase"
 msgstr "Première lettre de chaque mot en minuscules"
 
-#: common/constants.py:23
+#: src/display.py:31
 msgid "First letter of each word uppercase"
 msgstr "Première lettre de chaque mot en majuscules"
 
-#: common/constants.py:27
+#: src/display.py:35
 msgid "Name [n]"
 msgstr "Nom [n]"
 
-#: common/constants.py:28
+#: src/display.py:36
 msgid "Name - first x characters [nx]"
 msgstr "Nom - premiers caractères x [nx]"
 
-#: common/constants.py:29
+#: src/display.py:37
 msgid "Name - last x characters [n-x]"
 msgstr "Nom - derniers caractères x [n-x]"
 
-#: common/constants.py:30
+#: src/display.py:38
 msgid "Name from x [n,x]"
 msgstr "Nom - à partir de x [n,x]"
 
-#: common/constants.py:31
+#: src/display.py:39
 msgid "Counter [c]"
 msgstr "Compteur [c]"
 
-#: common/constants.py:32
+#: src/display.py:40
 msgid "Date - current [d]"
 msgstr "Date - actuelle [d]"
 
-#: common/constants.py:57
+#: src/display.py:44
 msgid "Old name"
 msgstr "Ancien nom de fichier"
 
-#: common/constants.py:58
+#: src/display.py:45
 msgid "New name"
 msgstr "Nouveau nom de fichier"
 
-#: common/constants.py:59
+#: src/display.py:46
 msgid "Size"
 msgstr "Taille"
 
-#: common/constants.py:60
+#: src/display.py:47
 msgid "Date modified"
 msgstr "Modifié le"
 
-#: common/constants.py:61
+#: src/display.py:48
 msgid "Date created"
 msgstr "Créé le"
 
-#: common/constants.py:62
+#: src/display.py:49
 msgid "Location"
 msgstr "Emplacement"
 
-#: common/constants.py:66
+#: src/display.py:53
 msgid "Open"
 msgstr "Ouvrir"
 
-#: common/constants.py:67
+#: src/display.py:54
 msgid "Exit"
 msgstr "Quitter"
 
-#: common/constants.py:68
+#: src/display.py:55
 msgid "File"
 msgstr "Fichier"
 
-#: common/constants.py:69
+#: src/display.py:56
 msgid "Website"
 msgstr "Site internet"
 
-#: common/constants.py:70
+#: src/display.py:57
+msgid "French"
+msgstr "Français"
+
+#: src/display.py:58
+msgid "English"
+msgstr "Anglais"
+
+#: src/display.py:59
 msgid "About"
 msgstr "A propos"
 
-#: common/constants.py:71
+#: src/display.py:60
 msgid "Help"
 msgstr "Aide"
 
-#: common/constants.py:75
+#: src/display.py:64
 msgid "Method"
 msgstr "Méthode"
 
-#: common/constants.py:76
+#: src/display.py:65
 msgid "File name:"
 msgstr "Nom de fichier :"
 
-#: common/constants.py:77
+#: src/display.py:66
 msgid "Arguments:"
 msgstr "Arguments :"
 
-#: common/constants.py:78
+#: src/display.py:67
 msgid "Search and replace"
 msgstr "Chercher et remplacer"
 
-#: common/constants.py:79
+#: src/display.py:68
 msgid "Search:"
 msgstr "Recherche :"
 
-#: common/constants.py:80
+#: src/display.py:69
 msgid "Replace:"
 msgstr "Remplacer :"
 
-#: common/constants.py:81
+#: src/display.py:70
 msgid "Counter"
 msgstr "Compteur"
 
-#: common/constants.py:82
+#: src/display.py:71
 msgid "Start at:"
 msgstr "Démarrer à :"
 
-#: common/constants.py:83
+#: src/display.py:72
 msgid "Step by:"
 msgstr "Pas :"
 
-#: common/constants.py:84
+#: src/display.py:73
 msgid "Digits:"
 msgstr "Nombre de chiffre :"
 
-#: common/constants.py:85
+#: src/display.py:74
 msgid "Timestamp format"
 msgstr "Format date/heure"
 
-#: common/constants.py:86
+#: src/display.py:75
 msgid "Rename"
 msgstr "Renommer"
 
-#: common/constants.py:87
+#: src/display.py:76
 msgid "Close after rename"
 msgstr "Fermer après renommage"
 
-#: common/constants.py:91
+#: src/display.py:80
 msgid "file(s)"
 msgstr "fichier(s)"
 
-#: common/constants.py:92
+#: src/display.py:81
 msgid "A file name cannot contain the following characters: \\ /: *? \"<> |"
 msgstr ""
 "Un nom de fichier ne peut pas contenir les caractères suivants : \\ / : * ? "

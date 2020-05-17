@@ -50,12 +50,14 @@ class Display:
         }
 
         self.TOOLBAR = {
-            "open"   : _("Open"),
-            "exit"   : _("Exit"),
+            "open"    : _("Open"),
+            "exit"    : _("Exit"),
             "file"    : _("File"),
-            "website": _("Website"),
-            "about"  : _("About"),
-            "help"   : _("Help"),
+            "website" : _("Website"),
+            "french"  : _("French"),
+            "english" : _("English"),
+            "about"   : _("About"),
+            "help"    : _("Help"),
         }
 
         self.PARAMETERS = {
