@@ -39,5 +39,5 @@ cd multiple_renaming
 Run the app
 
 ```bash
-python3 app.py
+python3 multiple_renaming.py
 ```
