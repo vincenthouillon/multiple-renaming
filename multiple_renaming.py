@@ -20,7 +20,7 @@ import re
 import sys
 import webbrowser
 from datetime import datetime
-from tkinter import INSERT, Image, Menu, Tk
+from tkinter import INSERT, Image, Menu, Tk, PhotoImage
 from tkinter.filedialog import askopenfilenames
 
 from src.display import Display
@@ -57,8 +57,10 @@ class MultipleRenaming:
         self.master.minsize(700, 540)
         self.master.geometry("700x540")
 
-        img = Image("photo", file=os.path.join("icons", "icon.png"))
-        self.master.tk.call("wm", "iconphoto", self.master._w, img)
+        # img = Image("photo", file=os.path.join("icons", "icon.png"))
+        # self.master.tk.call("wm", "iconphoto", self.master._w, img)
+
+        self.master.iconphoto(True, PhotoImage(file=r"icons/icon.png"))
 
         # Load and apply settings
         config = configparser.ConfigParser()
@@ -84,7 +86,7 @@ class MultipleRenaming:
             self.master.bind("<Command-o>", self.open_filenames)
 
             file_menu.add_command(
-                label=toolbar["exit"], accelerator="Command-W", command=quit)
+                label=toolbar["exit"], accelerator="Command-W", command=self.master.destroy)
         else:
             file_menu.add_command(
                 label=toolbar["open"], accelerator="Ctrl-O",
