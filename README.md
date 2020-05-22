@@ -1,6 +1,6 @@
 # Multiple Renaming
 
-## File renaming utilty.
+## File renaming utility.
 
 > :construction: In progress
 

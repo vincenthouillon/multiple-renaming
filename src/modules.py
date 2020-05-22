@@ -84,10 +84,10 @@ class Modules:
     def set_language(self, lng):
         config = configparser.ConfigParser()
 
-        config.read("src/config.cfg")
+        config.read("config.ini")
         config["language"]["language"] = lng
 
-        with open("src/config.cfg", "w") as configfile:
+        with open("config.ini", "w") as configfile:
             config.write(configfile)
 
         # Restart app

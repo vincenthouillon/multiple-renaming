@@ -52,19 +52,15 @@ class MultipleRenaming:
 
     def configure(self):
         """Definition of the title, size and icon of the application."""
-        # pylint: disable=protected-access
         self.master.title("Multiple Renaming")
         self.master.minsize(700, 540)
         self.master.geometry("700x540")
-
-        # img = Image("photo", file=os.path.join("icons", "icon.png"))
-        # self.master.tk.call("wm", "iconphoto", self.master._w, img)
 
         self.master.iconphoto(True, PhotoImage(file=r"icons/icon.png"))
 
         # Load and apply settings
         config = configparser.ConfigParser()
-        config.read(os.path.join("src", "config.cfg"))
+        config.read("config.ini")
         lng = config["language"]["language"]
 
         Display.set_language(lng)
@@ -94,7 +90,7 @@ class MultipleRenaming:
             self.master.bind("<Control-o>", self.open_filenames)
 
             file_menu.add_command(
-                label=toolbar["exit"], accelerator="Alt-F4", command=quit)
+                label=toolbar["exit"], accelerator="Alt-F4", command=sys.exit)
 
         menu.add_cascade(label=toolbar["file"], menu=file_menu)
 
