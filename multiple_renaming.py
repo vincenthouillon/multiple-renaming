@@ -380,6 +380,8 @@ class MultipleRenaming:
                     text=old_name,
                     values=(name_modified, size, date_creation_formated,
                             date_modified_formated, location))
+                if platform.system() == "Darwin":
+                    self.activate_button()
 
     def activate_button(self, state="normal"):
         """Set state button rename.

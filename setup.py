@@ -5,13 +5,14 @@ Usage (macOS):
     python3 setup.py py2app
 
 Usage (Windows):
-    setup.py build (exe without installer)
-    setup.py bdist_msi ( exe and installer)
+    setup.py build (generate .exe without installer)
+    setup.py bdist_msi (generate .exe and installer)
 """
 
 import sys
 
 from setuptools import setup
+from multiple_renaming import __version__, __author__
 
 if sys.platform == "darwin":
     extra_options = dict(
@@ -20,7 +21,8 @@ if sys.platform == "darwin":
             ("", ["src"]),
             ("", ["icons"]),
             ("", ["locales"]),
-            ("", ["widgets"])
+            ("", ["widgets"]),
+            ("", ["config.ini"])
         ],
         options={'py2app': {"iconfile": "icons/icon.icns"}},
         setup_requires=['py2app'],
@@ -87,8 +89,8 @@ else:
 
 setup(
     name="Multiple Renaming",
-    version="0.8",
-    author="Vincent Houillon",
+    version=__version__,
+    author=__author__,
     description="File renaming utility",
     license="MIT",
     **extra_options
