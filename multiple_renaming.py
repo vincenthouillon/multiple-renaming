@@ -28,6 +28,7 @@ from src.modules import Modules
 from widgets.parameters import Parameters
 from widgets.statusbar import StatusBar
 from widgets.treeview import Treeview
+from widgets.about import About
 
 __author__ = "Vincent Houillon"
 __website__ = r"https://github.com/vincenthouillon/multiple_renaming"
@@ -75,6 +76,8 @@ class MultipleRenaming:
 
         toolbar = self.display.TOOLBAR
 
+        about = About( __website__)
+
         if platform.system() == "Darwin":
             file_menu.add_command(
                 label=toolbar["open"], accelerator="Command-O",
@@ -106,7 +109,8 @@ class MultipleRenaming:
         edit_menu = Menu(menu, tearoff=False)
         edit_menu.add_command(label=toolbar["website"],
                               command=lambda: webbrowser.open(__website__))
-        edit_menu.add_command(label=toolbar["about"])
+        edit_menu.add_command(label=toolbar["about"],
+                              command=lambda: about.top_level(__version__))
         menu.add_cascade(label=toolbar["help"], menu=edit_menu)
 
     def load_widgets(self):
