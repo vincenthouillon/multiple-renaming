@@ -1,6 +1,7 @@
 from tkinter import BOTH, LEFT, RIGHT, TOP, Frame, IntVar, Menu, W, X, ttk
 
 from src.display import Display
+from _datetime import datetime
 
 
 class Parameters:
@@ -21,12 +22,12 @@ class Parameters:
 
         # --- SETTINGS CONTENT
         self.left_panel = ttk.Frame(self.parameters)
-        self.left_panel.pack(side=LEFT, fill=X, expand=True)
+        self.left_panel.pack(side=LEFT, fill="both", expand=True)
 
         # region: Settings
         self.method_labelframe = ttk.LabelFrame(
             self.left_panel, text=PARAMS["method"], padding=(0, 5))
-        self.method_labelframe.pack(fill=BOTH, pady=4, padx=10)
+        self.method_labelframe.pack(fill=BOTH, pady=4, padx=6)
 
         # region: Row 01
         self.method_row_01 = ttk.Frame(self.method_labelframe)
@@ -61,7 +62,7 @@ class Parameters:
         # region: Search & Replace
         self.search_labelframe = ttk.LabelFrame(
             self.left_panel, text=PARAMS["search_and_replace"], padding=(0, 5))
-        self.search_labelframe.pack(fill=BOTH, pady=4, padx=10)
+        self.search_labelframe.pack(fill=BOTH, pady=4, padx=6)
 
         # Row 01
         self.search_row_01 = ttk.Frame(self.search_labelframe)
@@ -92,7 +93,7 @@ class Parameters:
         # region: Counter
         self.counter_labelframe = ttk.LabelFrame(
             self.right_panel, text=PARAMS["counter"], padding=(0, 5))
-        self.counter_labelframe.pack(anchor=W, pady=4, padx=10, fill=X)
+        self.counter_labelframe.pack(anchor=W, pady=4, padx=6, fill=X)
 
         self.count_row_01 = ttk.Frame(self.counter_labelframe)
         self.lbl_start = ttk.Label(self.count_row_01, text=PARAMS["start"])
@@ -124,7 +125,12 @@ class Parameters:
         # region: Date
         self.date_labelframe = ttk.LabelFrame(
             self.right_panel, text=PARAMS["timestamp"], padding=(0, 5))
-        self.date_labelframe.pack(expand=True, fill=X, pady=4, padx=10)
+        self.date_labelframe.pack(expand=True, fill=X, pady=4, padx=6)
+
+        self.entry_date = ttk.Entry(self.date_labelframe)
+        now = datetime.now()
+        self.entry_date.insert(0, now.strftime("%d/%m/%Y"))
+        self.entry_date.pack(fill="x", pady=5, padx=5)
 
         self.cbox_date = ttk.Combobox(self.date_labelframe, values=DATE_FORMAT)
         self.cbox_date.current(0)
@@ -134,7 +140,7 @@ class Parameters:
         txt_btn = txt_btn = "✔️ " + PARAMS["btn_rename"]
         self.btn_rename = ttk.Button(
             self.right_panel, text=txt_btn)
-        self.btn_rename.pack(pady=12)
+        self.btn_rename.pack(pady=5)
 
         self.check_var = IntVar(value=0)
         self.cbox_rename = ttk.Checkbutton(

@@ -146,9 +146,13 @@ class MultipleRenaming:
         self.params.entry_replace.bind(
             "<FocusIn>", self.search_and_replace)
 
-        self.valid = self.params.frame.register(self.input_filename)
+        self.params.entry_date.bind(
+            "<Return>", lambda event: self.params.entry_filename.focus())
+
+        self.valid_filename = self.params.frame.register(self.input_filename)
         self.params.entry_filename.config(
-            validate="all", validatecommand=(self.valid, "%P"))
+            validate="all", validatecommand=(self.valid_filename, "%P"))
+
         self.statusbar = StatusBar(self.master)
         self.params.btn_rename.config(command=self.rename)
 
@@ -183,7 +187,9 @@ class MultipleRenaming:
 
         user_input = P
 
-        date_format = self.modules.date_formatting(self.params.cbox_date.get())
+        date_format = self.modules.date_formatting(
+            self.params.cbox_date.get(),
+            self.params.entry_date.get())
         counter = int(self.params.sbox_start.get())
 
         if platform.system() == "Windows":
