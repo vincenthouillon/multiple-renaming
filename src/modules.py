@@ -53,33 +53,44 @@ class Modules:
         else:
             return new_name + ext
 
-    def date_formatting(self, get_date):
+    def date_formatting(self, format_date, date_selected):
         """Date formatting management.
 
         Arguments:
-           get_date {str} -- Date
+           format_date {str} -- Date
+           date_selected {str} -- Date user input
 
         Returns:
             str -- formatted date
         """
 
-        now = datetime.now()
-        date_format = get_date
-        if "yyyy" in date_format:
-            date_format = date_format.replace("yyyy", now.strftime("%Y"))
-        elif "yy" in date_format:
-            date_format = date_format.replace("yy", now.strftime("%y"))
-        if "mm" in date_format:
-            date_format = date_format.replace("mm", now.strftime("%m"))
-        if "dd" in date_format:
-            date_format = date_format.replace("dd", now.strftime("%d"))
-        if "hh" in date_format:
-            date_format = date_format.replace("hh", now.strftime("%H"))
-        if "nn" in date_format:
-            date_format = date_format.replace("nn", now.strftime("%M"))
-        if "ss" in date_format:
-            date_format = date_format.replace("ss", now.strftime("%S"))
-        return date_format
+        if len(date_selected) == 16:
+            date_selected = datetime.strptime(date_selected, "%d/%m/%Y %H:%M")
+        elif len(date_selected) == 10:
+            date_selected = datetime.strptime(date_selected, "%d/%m/%Y")
+
+        if "yyyy" in format_date:
+            format_date = format_date.replace(
+                "yyyy", date_selected.strftime("%Y"))
+        elif "yy" in format_date:
+            format_date = format_date.replace(
+                "yy", date_selected.strftime("%y"))
+        if "mm" in format_date:
+            format_date = format_date.replace(
+                "mm", date_selected.strftime("%m"))
+        if "dd" in format_date:
+            format_date = format_date.replace(
+                "dd", date_selected.strftime("%d"))
+        if "hh" in format_date:
+            format_date = format_date.replace(
+                "hh", date_selected.strftime("%H"))
+        if "nn" in format_date:
+            format_date = format_date.replace(
+                "nn", date_selected.strftime("%M"))
+        if "ss" in format_date:
+            format_date = format_date.replace(
+                "ss", date_selected.strftime("%S"))
+        return format_date
 
     def set_language(self, lng):
         config = configparser.ConfigParser()
