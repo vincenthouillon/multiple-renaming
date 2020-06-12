@@ -32,7 +32,7 @@ from widgets.about import About
 
 __author__ = "Vincent Houillon"
 __website__ = r"https://github.com/vincenthouillon/multiple_renaming"
-__version__ = "0.8"
+__version__ = "0.9"
 
 
 class MultipleRenaming:
@@ -76,7 +76,7 @@ class MultipleRenaming:
 
         toolbar = self.display.TOOLBAR
 
-        about = About( __website__)
+        about = About(__website__)
 
         if platform.system() == "Darwin":
             file_menu.add_command(
@@ -85,7 +85,8 @@ class MultipleRenaming:
             self.master.bind("<Command-o>", self.open_filenames)
 
             file_menu.add_command(
-                label=toolbar["exit"], accelerator="Command-W", command=self.master.destroy)
+                label=toolbar["exit"], accelerator="Command-W",
+                command=self.master.destroy)
         else:
             file_menu.add_command(
                 label=toolbar["open"], accelerator="Ctrl-O",
@@ -125,14 +126,17 @@ class MultipleRenaming:
 
         self.params.cbox_arguments.bind(
             "<<ComboboxSelected>>", self.arguments_callback)
+
         self.params.sbox_start.bind(
             "<ButtonRelease>", lambda event: self.params.entry_filename.focus())
         self.params.sbox_step.bind(
             "<ButtonRelease>", lambda event: self.params.entry_filename.focus())
         self.params.sbox_len.bind(
             "<ButtonRelease>", lambda event: self.params.entry_filename.focus())
+
         self.params.cbox_date.bind(
-            "<<ComboboxSelected>>", lambda event: self.params.entry_filename.focus())
+            "<<ComboboxSelected>>",
+            lambda event: self.params.entry_filename.focus())
 
         self.params.entry_search.bind(
             "<KeyRelease>", self.search_and_replace)
@@ -147,7 +151,8 @@ class MultipleRenaming:
             "<FocusIn>", self.search_and_replace)
 
         self.params.entry_date.bind(
-            "<Return>", lambda event: self.params.entry_filename.focus())
+            "<KeyRelease>", lambda event: self.input_filename(
+                self.params.entry_filename.get()))
 
         self.valid_filename = self.params.frame.register(self.input_filename)
         self.params.entry_filename.config(
@@ -168,8 +173,7 @@ class MultipleRenaming:
         self.replace_filename = self.initial_filenames[:]
 
         txt = self.display.STATUSBAR["nb_files"]
-        self.statusbar.lbl_count_files.config(
-            text=f"{len(self.initial_filenames)} {txt} |")
+        self.statusbar.var_nbfiles.set(len(self.initial_filenames))
         self.display_treeview()
 
     def input_filename(self, P):
@@ -187,9 +191,14 @@ class MultipleRenaming:
 
         user_input = P
 
-        date_format = self.modules.date_formatting(
-            self.params.cbox_date.get(),
-            self.params.entry_date.get())
+        date_format, alert = self.get_format_date()
+
+        if alert:
+            self.statusbar.var_alert.set(alert)
+            self.statusbar.update()
+        else:
+            self.statusbar.var_alert.set("")
+
         counter = int(self.params.sbox_start.get())
 
         if platform.system() == "Windows":
@@ -208,10 +217,13 @@ class MultipleRenaming:
                 new_path = os.path.join(dirname, temp_input + ext)
                 self.changed_filenames[index] = new_path
 
-            if "[d]" in user_input:
-                temp_input = temp_input.replace("[d]", date_format)
-                new_path = os.path.join(dirname, temp_input + ext)
-                self.changed_filenames[index] = new_path
+            try:
+                if "[d]" in user_input:
+                    temp_input = temp_input.replace("[d]", date_format)
+                    new_path = os.path.join(dirname, temp_input + ext)
+                    self.changed_filenames[index] = new_path
+            except TypeError:
+                pass
 
             if "[c]" in user_input:
                 formated_counter = f"{counter:0{self.params.sbox_len.get()}}"
@@ -274,6 +286,12 @@ class MultipleRenaming:
 
         self.display_treeview()
         return True
+
+    def get_format_date(self):
+        date_format = self.modules.date_formatting(
+            self.params.cbox_date.get(),
+            self.params.entry_date.get())
+        return (date_format[0], date_format[1])
 
     def search_and_replace(self, event):
         """Search and replace function.
@@ -343,6 +361,7 @@ class MultipleRenaming:
         # pylint: disable=no-else-break, no-else-continue
 
         # Delete treeview content
+
         self.treeview.tree.delete(*self.treeview.tree.get_children())
 
         for initial, changed in zip(
@@ -418,13 +437,13 @@ class MultipleRenaming:
 
         for char in self.display.WINDOWS_PROHIBITED_CHAR:
             if char in name_modified:
-                self.statusbar.lbl_alert.config(
-                    text=self.display.STATUSBAR["alert"])
+                self.statusbar.var_alert.set(
+                    self.display.STATUSBAR["alert"])
                 PlaySound("SystemAsterisk", SND_ASYNC)
                 self.activate_button(False)
                 break
             else:
-                self.statusbar.lbl_alert.config(text="")
+                self.statusbar.var_alert.set("")
                 self.activate_button()
 
     def arguments_callback(self, event):

@@ -77,8 +77,9 @@ class Display:
         }
 
         self.STATUSBAR = {
-            "nb_files" : _("file(s)"),
-            "alert"   : _("A file name cannot contain the following characters: \ /: *? \"<> |")
+            "nb_files"   : _("file(s)"),
+            "alert"      : _("A file name cannot contain the following characters: \ /: *? \"<> |"),
+            "date_error" : _("Date entry error, format is dd/mm/yyyy or dd/mm/yyyy hh:mm:ss")
         }
 
         # CONSTANTS

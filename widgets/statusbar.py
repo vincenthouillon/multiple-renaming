@@ -1,4 +1,5 @@
-from tkinter import ttk
+from tkinter import IntVar, StringVar, ttk
+import sys
 
 from src.display import Display
 
@@ -9,7 +10,8 @@ class StatusBar:
     def __init__(self, master):
         self.display = Display()
 
-        txt = "0 " + self.display.STATUSBAR["nb_files"] + " |"
+        self.var_alert = StringVar()
+        self.var_nbfiles = IntVar()
 
         self.frm_status = ttk.Frame(master, relief="sunken")
         self.frm_status.pack(fill="x")
@@ -18,12 +20,24 @@ class StatusBar:
         self.row_status.pack(fill="x")
 
         self.lbl_count_files = ttk.Label(
-            self.row_status, text=txt)
+            self.row_status, textvariable=self.var_nbfiles)
         self.lbl_count_files.pack(side="left")
 
-        self.lbl_alert = ttk.Label(
-            self.row_status,
-            text="",
-            foreground="red",
-            font=("sans-serif", 9, "bold"))
+        self.lbl_files = ttk.Label(
+            self.row_status, text=self.display.STATUSBAR["nb_files"] + " | ")
+        self.lbl_files.pack(side="left")
+
+        if sys.platform == "darwin":
+            self.lbl_alert = ttk.Label(
+                self.row_status,
+                textvariable=self.var_alert,
+                foreground="red",
+                font=("sans-serif", 12, "bold"))
+        else:
+            self.lbl_alert = ttk.Label(
+                self.row_status,
+                textvariable=self.var_alert,
+                foreground="red",
+                font=("sans-serif", 9, "bold"))
+
         self.lbl_alert.pack(side="left")

@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 py2app = "*"
 py2exe = "*"
+cx-freeze = "*"
 
 [requires]
 python_version = "3"

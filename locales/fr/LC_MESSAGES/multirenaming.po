@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Multiple renaming 1.0\n"
-"POT-Creation-Date: 2020-05-17 10:07+0200\n"
-"PO-Revision-Date: 2020-05-17 10:08+0200\n"
+"POT-Creation-Date: 2020-06-12 09:52+0200\n"
+"PO-Revision-Date: 2020-06-12 09:55+0200\n"
 "Last-Translator: Vincent Houillon <https://github.com/vincenthouillon/"
 "multiple_renaming>\n"
 "Language-Team: French\n"
@@ -192,6 +192,12 @@ msgid "A file name cannot contain the following characters: \\ /: *? \"<> |"
 msgstr ""
 "Un nom de fichier ne peut pas contenir les caractères suivants : \\ / : * ? "
 "\\ » < > |"
+
+#: src/display.py:82
+msgid "Date entry error, format is dd/mm/yyyy or dd/mm/yyyy hh:mm:ss"
+msgstr ""
+"Erreur de saisie de date, le format doit être : jj/mm/aaaa ou jj/mm/aaaa hh:"
+"mm:ss"
 
 #~ msgid "Show license"
 #~ msgstr "Afficher la licence"
