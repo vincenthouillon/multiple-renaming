@@ -3,8 +3,13 @@ import os
 import sys
 from datetime import datetime
 
+from src.display import Display
+
 
 class Modules:
+
+    def __init__(self):
+        self.display = Display()
 
     def get_human_readable_size(self, size, precision=0):
         """Convert n bytes into a human readable string based on format.
@@ -64,33 +69,36 @@ class Modules:
             str -- formatted date
         """
 
-        if len(date_selected) == 16:
-            date_selected = datetime.strptime(date_selected, "%d/%m/%Y %H:%M")
+        if len(date_selected) == 19:
+            date_selected = datetime.strptime(date_selected, "%d/%m/%Y %H:%M:%S")
         elif len(date_selected) == 10:
-            date_selected = datetime.strptime(date_selected, "%d/%m/%Y")
+                date_selected = datetime.strptime(date_selected, "%d/%m/%Y")
 
-        if "yyyy" in format_date:
-            format_date = format_date.replace(
-                "yyyy", date_selected.strftime("%Y"))
-        elif "yy" in format_date:
-            format_date = format_date.replace(
-                "yy", date_selected.strftime("%y"))
-        if "mm" in format_date:
-            format_date = format_date.replace(
-                "mm", date_selected.strftime("%m"))
-        if "dd" in format_date:
-            format_date = format_date.replace(
-                "dd", date_selected.strftime("%d"))
-        if "hh" in format_date:
-            format_date = format_date.replace(
-                "hh", date_selected.strftime("%H"))
-        if "nn" in format_date:
-            format_date = format_date.replace(
-                "nn", date_selected.strftime("%M"))
-        if "ss" in format_date:
-            format_date = format_date.replace(
-                "ss", date_selected.strftime("%S"))
-        return format_date
+        try:
+            if "yyyy" in format_date:
+                format_date = format_date.replace(
+                    "yyyy", date_selected.strftime("%Y"))
+            elif "yy" in format_date:
+                format_date = format_date.replace(
+                    "yy", date_selected.strftime("%y"))
+            if "mm" in format_date:
+                format_date = format_date.replace(
+                    "mm", date_selected.strftime("%m"))
+            if "dd" in format_date:
+                format_date = format_date.replace(
+                    "dd", date_selected.strftime("%d"))
+            if "hh" in format_date:
+                format_date = format_date.replace(
+                    "hh", date_selected.strftime("%H"))
+            if "nn" in format_date:
+                format_date = format_date.replace(
+                    "nn", date_selected.strftime("%M"))
+            if "ss" in format_date:
+                format_date = format_date.replace(
+                    "ss", date_selected.strftime("%S"))
+            return (format_date, None)
+        except:
+            return (None, self.display.STATUSBAR["date_error"])
 
     def set_language(self, lng):
         config = configparser.ConfigParser()
@@ -104,3 +112,21 @@ class Modules:
         # Restart app
         python = sys.executable
         os.execl(python, python, * sys.argv)
+    
+    def date_parsing(self, user_input):
+        """Crop user input text and return a valid date.
+
+        Arguments:
+            user_input {str} -- Date entered by user
+
+        Returns:
+            str -- Date
+        """
+
+        try:
+            return datetime.strptime(user_input, '%d/%m/%Y')
+        except ValueError:
+            try:
+                return datetime.strptime(user_input, '%d/%m/%Y %H:%M:%S')
+            except ValueError:
+                return datetime.now()
