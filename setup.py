@@ -20,6 +20,7 @@ if sys.platform == "darwin":
         data_files=[
             ("", ["src"]),
             ("", ["icons"]),
+            ("", ["img"]),
             ("", ["locales"]),
             ("", ["widgets"]),
             ("", ["config.ini"])
@@ -72,7 +73,7 @@ elif sys.platform == "win32":
         options={
             "build_exe": {
                 "packages": ["src", "widgets"],
-                "include_files": ["icons", "locales", "config.ini"],
+                "include_files": ["icons", "locales", "config.ini", "img"],
             },
             "bdist_msi": bdist_msi_options,
         },

@@ -32,7 +32,7 @@ from widgets.about import About
 
 __author__ = "Vincent Houillon"
 __website__ = r"https://github.com/vincenthouillon/multiple_renaming"
-__version__ = "0.9"
+__version__ = "0.9.2"
 
 
 class MultipleRenaming:
@@ -317,9 +317,12 @@ class MultipleRenaming:
         if len(search_expr) > 0:
             self.changed_filenames = self.replace_filename[:]
             for index, word in enumerate(self.replace_filename):
+                _dirname = os.path.dirname(word)
+                _basename = os.path.basename(word)
+
                 if search_expr in word:
-                    self.changed_filenames[index] = word.replace(
-                        search_expr, replace_expr)
+                    self.changed_filenames[index] = os.path.join(
+                        _dirname, _basename.replace(search_expr, replace_expr))
         else:
             self.changed_filenames = self.replace_filename[:]
         self.display_treeview()
