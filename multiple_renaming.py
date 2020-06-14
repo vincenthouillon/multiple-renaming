@@ -72,6 +72,9 @@ class MultipleRenaming:
         menu = Menu(self.master)
         self.master.config(menu=menu)
 
+        self.img_fr = PhotoImage(file=r"img/fr.png")
+        self.img_en = PhotoImage(file=r"img/en.png")
+
         file_menu = Menu(menu, tearoff=False)
 
         toolbar = self.display.TOOLBAR
@@ -101,9 +104,13 @@ class MultipleRenaming:
         lang_menu = Menu(menu, tearoff=False)
         lang_menu.add_command(
             label=toolbar["french"],
+            image=self.img_fr,
+            compound="left",
             command=lambda: self.modules.set_language("fr"))
         lang_menu.add_command(
             label=toolbar["english"],
+            image=self.img_en,
+            compound="left",
             command=lambda: self.modules.set_language("en"))
         menu.add_cascade(label="Language", menu=lang_menu)
 
