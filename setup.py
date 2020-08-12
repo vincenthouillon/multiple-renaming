@@ -12,20 +12,19 @@ Usage (Windows):
 import sys
 
 from setuptools import setup
-from multiple_renaming import __version__, __author__
+from utils.versions import __version__, __author__
 
 if sys.platform == "darwin":
     extra_options = dict(
         app=['multiple_renaming.py'],
         data_files=[
-            ("", ["src"]),
-            ("", ["icons"]),
-            ("", ["img"]),
+            ("", ["utils"]),
+            ("", ["assets"]),
             ("", ["locales"]),
-            ("", ["widgets"]),
+            ("", ["views"]),
             ("", ["config.ini"])
         ],
-        options={'py2app': {"iconfile": "icons/icon.icns"}},
+        options={'py2app': {"iconfile": "assets/icon.icns"}},
         setup_requires=['py2app'],
     )
 
@@ -72,14 +71,14 @@ elif sys.platform == "win32":
     extra_options = dict(
         options={
             "build_exe": {
-                "packages": ["src", "widgets"],
-                "include_files": ["icons", "locales", "config.ini", "img"],
+                "packages": ["utils", "views"],
+                "include_files": ["assets", "locales", "config.ini"],
             },
             "bdist_msi": bdist_msi_options,
         },
         executables=[Executable("multiple_renaming.py",
                                 base="Win32GUI",
-                                icon="icons/icon.ico",
+                                icon="assets/icon.ico",
                                 targetName="Multiple Renaming")]
     )
 
