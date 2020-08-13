@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
+# pylint: disable=unused-argument
+# pylint: disable=no-member
+# pylint: disable=invalid-name
 
-"""Main program.
+
+""""Rename several" allows you to change the names of several
+files at the same time. It allows you to replace the file name,
+add the date, number a series of files, etc. with immediate preview
+before applying changes.
 
 author: Vincent HOUILLON
 """
 
 import os
-import re
 import sys
 from tkinter.filedialog import askopenfilenames
 
 from _datetime import datetime
-from utils.utils import (arguments_parsing, get_human_readable_size)
+from utils.parser import Parser
+from utils.utils import arguments_parsing, get_human_readable_size
 from views.view import View
 
 
@@ -21,6 +28,7 @@ class MultipleRenaming:
 
     def __init__(self):
         self.view = View(controller=self)
+        self.parser = Parser
 
         self.initial_filenames = list()
         self.initial_filepath = list()
@@ -40,9 +48,9 @@ class MultipleRenaming:
 
         self.view.statusbar.var_nbfiles.set(len(self.initial_filenames))
 
-        self.parse_filenames()
+        self.populate_treeview()
 
-    def parse_filenames(self, argument=None):
+    def populate_treeview(self, argument=None):
         """Parse filenames and send to view.display_treeview."""
         data = list()
 
@@ -71,10 +79,10 @@ class MultipleRenaming:
         with the rules of the application.
 
         Arguments:
-            P {str} -- Value of the entry if the edit is allowed
+        - P (str): Value of the entry if the edit is allowed
 
         Returns:
-            str -- Output text processed by application rules
+        - str: Output text processed by application rules
         """
         user_input = P
 
@@ -87,6 +95,8 @@ class MultipleRenaming:
             self.view.statusbar.var_alert.set("")
 
         counter = int(self.view.params.start_sbox.get())
+        step = int(self.view.params.step_sbox.get())
+        digits = self.view.params.digits_sbox.get()
 
         if sys.platform == "win32":
             self.view.check_valid_characters_filename(user_input)
@@ -95,90 +105,43 @@ class MultipleRenaming:
             dirname, filename = os.path.split(initial)
             filename, ext = os.path.splitext(filename)
 
-            if "[n]" in user_input:
-                temp_input = user_input.replace("[n]", filename)
-                new_path = os.path.join(dirname, temp_input + ext)
-                self.changed_filenames[index] = new_path
-            else:
-                temp_input = user_input
-                new_path = os.path.join(dirname, temp_input + ext)
-                self.changed_filenames[index] = new_path
+            self.parser = Parser(self.changed_filenames,
+                                 user_input, filename, dirname)
 
+            # Name [n]
+            temp_input = self.parser.name_n(ext, index)
+
+            # Name from first character [nX]
+            temp_input = self.parser.name_truncate_x(temp_input, ext, index)
+
+            # Name from last character [n-X]
+            temp_input = self.parser.name_last_x(temp_input, ext, index)
+
+            # Name from n character [n,X]
+            temp_input = self.parser.name_start_x(temp_input, ext, index)
+
+            # Add counter
+            temp_input = self.parser.add_counter(
+                temp_input, digits, counter, ext, index)
+            counter += step
+
+            # Add date
             try:
-                if "[d]" in user_input:
-                    temp_input = temp_input.replace("[d]", date_format)
-                    new_path = os.path.join(dirname, temp_input + ext)
-                    self.changed_filenames[index] = new_path
+                temp_input = self.parser.add_date(
+                    temp_input, date_format, ext, index)
             except TypeError:
                 pass
 
-            if "[c]" in user_input:
-                formated_counter = f"{counter:0{self.view.params.digits_sbox.get()}}"
-                temp_input = temp_input.replace("[c]", formated_counter)
-                new_path = os.path.join(dirname, temp_input + ext)
-                self.changed_filenames[index] = new_path
-                counter += int(self.view.params.step_sbox.get())
-
-            # Name from first character [nX]
-            if re.findall(r"\[n\d+\]", user_input):
-                re_findall = re.findall(r"\[n\d+\]", user_input)
-                position = re_findall[0][2:len(re_findall)-2]
-
-                len_dirname = len(os.path.dirname(filename))
-
-                temp_input = temp_input.replace(
-                    re_findall[0],
-                    filename[len_dirname:len_dirname + int(position)])
-
-                new_filename = os.path.join(
-                    dirname + os.sep + temp_input + ext)
-
-                self.changed_filenames[index] = new_filename
-
-            # Name from last character [n-X]
-            if re.findall(r"\[n-\d+\]", user_input):
-                re_findall = re.findall(r"\[n-\d+\]", user_input)
-                position = re_findall[0][3:len(re_findall)-2]
-
-                nchar = len(filename)-int(position)
-                # result = [condition is false, condition is true][condition]
-                nchar = [0, nchar][nchar > 0]
-
-                len_dirname = len(os.path.dirname(filename)) + 1
-
-                temp_input = temp_input.replace(
-                    re_findall[0], filename[nchar:])
-
-                new_filename = os.path.join(
-                    dirname + os.sep + temp_input + ext)
-
-                self.changed_filenames[index] = new_filename
-
-            # Name from n character [n,X]
-            if re.findall(r"\[n,\d+\]", user_input):
-                re_findall = re.findall(r"\[n,\d+\]", user_input)
-                position = re_findall[0][3:len(re_findall)-2]
-
-                len_dirname = len(os.path.dirname(filename))
-
-                temp_input = temp_input.replace(
-                    re_findall[0], filename[len_dirname + int(position):])
-
-                new_filename = os.path.join(
-                    dirname + os.sep + temp_input + ext)
-
-                self.changed_filenames[index] = new_filename
-
         self.replace_filename = self.changed_filenames[:]
 
-        self.parse_filenames(self.replace_filename)
+        self.populate_treeview(self.replace_filename)
         return True
 
     def search_and_replace(self, event):
         """Search and replace function.
 
         Arguments:
-            event {dict} -- Bind event.
+        - event (dict): Bind event.
         """
         search_expr = self.view.params.find_entry.get()
         replace_expr = self.view.params.replace_entry.get()
@@ -197,7 +160,7 @@ class MultipleRenaming:
                         _dirname, _basename.replace(search_expr, replace_expr))
         else:
             self.changed_filenames = self.replace_filename[:]
-        self.parse_filenames(self.changed_filenames)
+        self.populate_treeview(self.changed_filenames)
 
     def rename(self):
         """Execute file renaming."""
@@ -225,7 +188,7 @@ class MultipleRenaming:
             self.initial_filenames[index] = os.path.join(
                 dirname, modified)
 
-        self.parse_filenames()
+        self.populate_treeview()
         self.view.params.filename_entry.focus()
 
         if self.view.params.close_var.get():

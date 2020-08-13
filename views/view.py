@@ -45,8 +45,8 @@ class View(Tk):
     def _set_window_ui(self):
         """Global configuration of the main window."""
         self.title(f"Multiple Renaming - {__version__}")
-        self.minsize(700, 540)
-        self.geometry("700x540")
+        self.minsize(600, 540)
+        self.geometry("600x540")
 
         if sys.platform == "win32":
             self.iconbitmap(r"./assets/icon.ico")
@@ -173,7 +173,7 @@ class View(Tk):
         """
         for key, value in self.arguments_dict.items():
             if self.params.arguments_cbox.get() in value:
-              self.controller.parse_filenames(argument=key)
+              self.controller.populate_treeview(argument=key)
 
     def _populate_options(self):
         """Filled the options menu."""

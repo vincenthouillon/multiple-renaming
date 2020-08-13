@@ -3,4 +3,4 @@
 
 __author__ = "Vincent Houillon"
 __website__ = r"https://github.com/vincenthouillon/multiple_renaming"
-__version__ = "1.0"
+__version__ = "1.2"

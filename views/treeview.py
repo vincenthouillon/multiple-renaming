@@ -14,6 +14,8 @@ class Treeview(ttk.Treeview):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
+        self.tree_frm = ttk.Frame(self.parent)
+        self.tree_frm.pack(fill="both", expand=True)
 
         columns = (_("Old name"),
                    _("New name"),
@@ -35,18 +37,18 @@ class Treeview(ttk.Treeview):
                 "Treeview", [("Treeview.treearea", {"sticky": "nswe"})])
 
         self.tree = ttk.Treeview(
-            self.parent, show="headings", column=columns, selectmode="none")
+            self.tree_frm, show="headings", column=columns, selectmode="none")
 
         self.tree.tag_configure("ERR", foreground="#d63031")
 
         # Scrollbars
         horizontal_scrollbar = ttk.Scrollbar(
-            self.tree, orient="horizontal", command=self.tree.xview)
+            self.tree_frm, orient="horizontal", command=self.tree.xview)
         horizontal_scrollbar.pack(side="bottom", fill="x")
         self.tree.configure(xscrollcommand=horizontal_scrollbar.set)
 
         vertical_scrollbar = ttk.Scrollbar(
-            self.tree, orient="vertical", command=self.tree.yview)
+            self.tree_frm, orient="vertical", command=self.tree.yview)
         vertical_scrollbar.pack(side="right", fill="y")
         self.tree.configure(yscrollcommand=vertical_scrollbar.set)
 
