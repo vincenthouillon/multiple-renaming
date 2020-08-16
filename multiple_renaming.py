@@ -4,8 +4,8 @@
 # pylint: disable=no-member
 # pylint: disable=invalid-name
 
-
-""""Rename several" allows you to change the names of several
+"""
+Rename several allows you to change the names of several
 files at the same time. It allows you to replace the file name,
 add the date, number a series of files, etc. with immediate preview
 before applying changes.
