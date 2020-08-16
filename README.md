@@ -1,16 +1,26 @@
 # Multiple Renaming
 
-## File renaming utility.
+<p align="center">
+    <a href="https://github.com/vincenthouillon/multiple-renaming/issues"><img alt="GitHub issues"
+            src="https://img.shields.io/github/issues/vincenthouillon/multiple-renaming.svg"></a>
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/vincenthouillon/multiple-renaming.svg">
+    <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/django.svg">
+</p>
 
-> :construction: In progress
+## File renaming utility.
 
 Use "Multiple Renaming" to change the names of many files at once. You can replace the file name, add the date, number a series of files, etc. with an immediate overview before applying the changes.
 
 Multilingual support :fr: :gb:
 
-![Screenshot](img/screenshot.png)
+![Screenshot](assets/screenshot.png)
 
-## Getting start
+## Downloads:
+
+- [Download for Windows](https://github.com/vincenthouillon/multiple-renaming/releases/download/V1.2/Multiple.Renaming-1.2-amd64.msi)
+- [Download for MacOS](https://github.com/vincenthouillon/multiple-renaming/releases/download/V1.2/Multiple.Renaming-1.2-macOS.zip)
+
+## or Getting start
 
 ### Required
 
@@ -32,8 +42,8 @@ No need for requirements, this program only uses the standard Python3 library.
 Clone the repo and cd into the directory
 
 ```bash
-git clone https://github.com/vincenthouillon/multiple_renaming.git
-cd multiple_renaming
+git clone https://github.com/vincenthouillon/multiple-renaming.git
+cd multiple-renaming
 ```
 
 Run the app
