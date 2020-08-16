@@ -164,8 +164,9 @@ class MultipleRenaming:
 
     def rename(self):
         """Execute file renaming."""
-        for index, (initial, modified) in enumerate(zip(self.initial_filenames,
-                                                        self.changed_filenames)):
+        for index, (initial, modified) in enumerate(zip(
+                self.initial_filenames,
+                self.changed_filenames)):
             dirname = os.path.dirname(initial)
             basename_initial = os.path.basename(initial)
             extension_initial = os.path.splitext(basename_initial)[1]

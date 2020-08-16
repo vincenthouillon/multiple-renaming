@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 # pylint: disable=undefined-variable
+# flake8: noqa: F821
 
 """Called from multiple_renaming.py."""
 
@@ -19,7 +20,8 @@ def get_human_readable_size(size, precision=0):
         size {float} -- File size
 
     Keyword Arguments:
-        precision {int} -- Number of digits after the decimal point. (default: {2})
+        precision {int} -- Number of digits after the decimal point.
+        (default: {2})
 
     Returns:
         str -- Size bytes converts
@@ -125,7 +127,8 @@ def set_language(lng):
 
     # Restart app
     if sys.platform == "darwin":
-        showinfo("Multiple Renaming", _("Please restart to apply the changes."))
+        showinfo("Multiple Renaming",
+                 _("Please restart to apply the changes."))
     else:
         python = sys.executable
         os.execl(python, python, * sys.argv)

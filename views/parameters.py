@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 # pylint: disable=undefined-variable
 # pylint: disable=unused-argument
+# flake8: noqa: F821
 
 """Called from views/view."""
 

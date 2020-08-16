@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 # pylint: disable=undefined-variable
+# flake8: noqa: F821
 
 """Called from viewq.view."""
 

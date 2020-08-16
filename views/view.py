@@ -173,7 +173,7 @@ class View(Tk):
         """
         for key, value in self.arguments_dict.items():
             if self.params.arguments_cbox.get() in value:
-              self.controller.populate_treeview(argument=key)
+                self.controller.populate_treeview(argument=key)
 
     def _populate_options(self):
         """Filled the options menu."""
