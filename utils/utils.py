@@ -1,16 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-# pylint: disable=undefined-variable
-# flake8: noqa: F821
-
 """Called from multiple_renaming.py."""
 
 import configparser
 import os
 import sys
+from tkinter.messagebox import showinfo
+
 from _datetime import datetime
 
-from tkinter.messagebox import showinfo
+from views import translation
+
+_ = translation.gettext
 
 
 def get_human_readable_size(size, precision=0):
@@ -26,11 +25,11 @@ def get_human_readable_size(size, precision=0):
     Returns:
         str -- Size bytes converts
     """
-    suffixes = ['o', 'Ko', 'Mo', 'Go', 'To']
+    suffixes = ["o", "Ko", "Mo", "Go", "To"]
     suffix_index = 0
     while size > 1024 and suffix_index < 4:
         suffix_index += 1  # increment the index of the suffix
-        size = size/1024.0  # apply the division
+        size = size / 1024.0  # apply the division
     return "%.*f %s" % (precision, size, suffixes[suffix_index])
 
 
@@ -53,7 +52,7 @@ def arguments_parsing(arg, new_name, ext):
         5: new_name.lower() + ext.lower(),
         6: new_name.upper() + ext.upper(),
         7: new_name.title() + ext,
-        8: new_name.capitalize() + ext
+        8: new_name.capitalize() + ext,
     }
 
     for key, value in parser.items():
@@ -75,38 +74,30 @@ def date_formatting(format_date, date_selected):
     """
 
     if len(date_selected) == 19:
-        date_selected = datetime.strptime(
-            date_selected, "%d/%m/%Y %H:%M:%S")
+        date_selected = datetime.strptime(date_selected, "%d/%m/%Y %H:%M:%S")
     elif len(date_selected) == 10:
         date_selected = datetime.strptime(date_selected, "%d/%m/%Y")
 
     try:
         if "yyyy" in format_date:
-            format_date = format_date.replace(
-                "yyyy", date_selected.strftime("%Y"))
+            format_date = format_date.replace("yyyy", date_selected.strftime("%Y"))
         elif "yy" in format_date:
-            format_date = format_date.replace(
-                "yy", date_selected.strftime("%y"))
+            format_date = format_date.replace("yy", date_selected.strftime("%y"))
         if "mm" in format_date:
-            format_date = format_date.replace(
-                "mm", date_selected.strftime("%m"))
+            format_date = format_date.replace("mm", date_selected.strftime("%m"))
         if "dd" in format_date:
-            format_date = format_date.replace(
-                "dd", date_selected.strftime("%d"))
+            format_date = format_date.replace("dd", date_selected.strftime("%d"))
         if "hh" in format_date:
-            format_date = format_date.replace(
-                "hh", date_selected.strftime("%H"))
+            format_date = format_date.replace("hh", date_selected.strftime("%H"))
         if "nn" in format_date:
-            format_date = format_date.replace(
-                "nn", date_selected.strftime("%M"))
+            format_date = format_date.replace("nn", date_selected.strftime("%M"))
         if "ss" in format_date:
-            format_date = format_date.replace(
-                "ss", date_selected.strftime("%S"))
+            format_date = format_date.replace("ss", date_selected.strftime("%S"))
         return (format_date, None)
     except AttributeError:
         return (
             None,
-            _("Date entry error, format is dd/mm/yyyy or dd/mm/yyyy hh:mm:ss")
+            _("Date entry error, format is dd/mm/yyyy or dd/mm/yyyy hh:mm:ss"),
         )
 
 
@@ -127,11 +118,10 @@ def set_language(lng):
 
     # Restart app
     if sys.platform == "darwin":
-        showinfo("Multiple Renaming",
-                 _("Please restart to apply the changes."))
+        showinfo("Multiple Renaming", _("Please restart to apply the changes."))
     else:
         python = sys.executable
-        os.execl(python, python, * sys.argv)
+        os.execl(python, python, *sys.argv)
 
 
 def date_parsing(user_input):
@@ -145,9 +135,9 @@ def date_parsing(user_input):
     """
 
     try:
-        return datetime.strptime(user_input, '%d/%m/%Y')
+        return datetime.strptime(user_input, "%d/%m/%Y")
     except ValueError:
         try:
-            return datetime.strptime(user_input, '%d/%m/%Y %H:%M:%S')
+            return datetime.strptime(user_input, "%d/%m/%Y %H:%M:%S")
         except ValueError:
             return datetime.now()

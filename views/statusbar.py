@@ -1,16 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-# pylint: disable=undefined-variable
-# flake8: noqa: F821
-
 """Called from views.view"""
 
 import sys
 from tkinter import IntVar, StringVar, ttk
 
+from views import translation
+
+_ = translation.gettext
+
 
 class StatusBar:
-    """ Display a satusbar. """
+    """Display a satusbar."""
 
     def __init__(self, parent):
         self.parent = parent
@@ -28,12 +27,10 @@ class StatusBar:
         row_status = ttk.Frame(frm_status)
         row_status.pack(fill="x")
 
-        lbl_count_files = ttk.Label(
-            row_status, textvariable=self.var_nbfiles)
+        lbl_count_files = ttk.Label(row_status, textvariable=self.var_nbfiles)
         lbl_count_files.pack(side="left")
 
-        lbl_files = ttk.Label(
-            row_status, text=_("file(s)") + " | ")
+        lbl_files = ttk.Label(row_status, text=_("file(s)") + " | ")
         lbl_files.pack(side="left")
 
         if sys.platform == "darwin":
@@ -41,12 +38,14 @@ class StatusBar:
                 row_status,
                 textvariable=self.var_alert,
                 foreground="red",
-                font=("sans-serif", 12, "bold"))
+                font=("sans-serif", 12, "bold"),
+            )
         else:
             lbl_alert = ttk.Label(
                 row_status,
                 textvariable=self.var_alert,
                 foreground="red",
-                font=("sans-serif", 9, "bold"))
+                font=("sans-serif", 9, "bold"),
+            )
 
         lbl_alert.pack(side="left")

@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-# pylint: disable=unused-argument
-# pylint: disable=no-member
-# pylint: disable=invalid-name
-
 """
 Rename several allows you to change the names of several
 files at the same time. It allows you to replace the file name,
@@ -24,7 +18,6 @@ from views.view import View
 
 
 class MultipleRenaming:
-    """Class Multiple Renaming."""
 
     def __init__(self):
         self.view = View(controller=self)
@@ -90,7 +83,7 @@ class MultipleRenaming:
 
         if alert:
             self.view.statusbar.var_alert.set(alert)
-            self.view.statusbar.update()
+            # self.view.statusbar.update()
         else:
             self.view.statusbar.var_alert.set("")
 

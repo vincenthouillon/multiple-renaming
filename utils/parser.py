@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
 """Parse user input. Called from multiple_renaming.py."""
 
 import os
@@ -48,16 +46,15 @@ class Parser:
         """
         if re.findall(r"\[n\d+\]", self.user_input):
             re_findall = re.findall(r"\[n\d+\]", self.user_input)
-            position = re_findall[0][2:len(re_findall)-2]
+            position = re_findall[0][2 : len(re_findall) - 2]
 
             len_dirname = len(os.path.dirname(self.filename))
 
             temp_input = temp_input.replace(
-                re_findall[0],
-                self.filename[len_dirname:len_dirname + int(position)])
+                re_findall[0], self.filename[len_dirname : len_dirname + int(position)]
+            )
 
-            new_filename = os.path.join(
-                self.dirname + os.sep + temp_input + ext)
+            new_filename = os.path.join(self.dirname + os.sep + temp_input + ext)
 
             self.changed_filenames[index] = new_filename
         return temp_input
@@ -75,17 +72,15 @@ class Parser:
         """
         if re.findall(r"\[n-\d+\]", self.user_input):
             re_findall = re.findall(r"\[n-\d+\]", self.user_input)
-            position = re_findall[0][3:len(re_findall)-2]
+            position = re_findall[0][3 : len(re_findall) - 2]
 
-            nchar = len(self.filename)-int(position)
+            nchar = len(self.filename) - int(position)
             # result = [condition is false, condition is true][condition]
             nchar = [0, nchar][nchar > 0]
 
-            temp_input = temp_input.replace(
-                re_findall[0], self.filename[nchar:])
+            temp_input = temp_input.replace(re_findall[0], self.filename[nchar:])
 
-            new_filename = os.path.join(
-                self.dirname + os.sep + temp_input + ext)
+            new_filename = os.path.join(self.dirname + os.sep + temp_input + ext)
 
             self.changed_filenames[index] = new_filename
         return temp_input
@@ -103,15 +98,15 @@ class Parser:
         """
         if re.findall(r"\[n,\d+\]", self.user_input):
             re_findall = re.findall(r"\[n,\d+\]", self.user_input)
-            position = re_findall[0][3:len(re_findall)-2]
+            position = re_findall[0][3 : len(re_findall) - 2]
 
             len_dirname = len(os.path.dirname(self.filename))
 
             temp_input = temp_input.replace(
-                re_findall[0], self.filename[len_dirname + int(position):])
+                re_findall[0], self.filename[len_dirname + int(position) :]
+            )
 
-            new_filename = os.path.join(
-                self.dirname + os.sep + temp_input + ext)
+            new_filename = os.path.join(self.dirname + os.sep + temp_input + ext)
 
             self.changed_filenames[index] = new_filename
         return temp_input

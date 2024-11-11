@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-
 """Retrieves the language selected in the config.ini file and
 loads the translation module."""
 
-import gettext
 import configparser
+import gettext
 
 # Load and apply settings
 config = configparser.ConfigParser()
@@ -13,8 +10,10 @@ config.read("config.ini")
 lng = config["language"]["language"]
 
 try:
-    text = gettext.translation("multirenaming",
-                               localedir="locales", languages=[lng])
-    text.install()
+    translation = gettext.translation(
+        domain="multirenaming", localedir="locales", languages=[lng]
+    )
+    translation.install()
 except FileNotFoundError:
-    gettext.install(None)
+    gettext.install("multirenaming", "locales")
+    translation = gettext.NullTranslations()

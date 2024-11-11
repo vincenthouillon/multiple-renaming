@@ -1,16 +1,15 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-# pylint: disable=undefined-variable
-# flake8: noqa: F821
-
 """Called from views.view."""
 
 import sys
 from tkinter import ttk
 
+from views import translation
+
+_ = translation.gettext
+
 
 class Treeview(ttk.Treeview):
-    """ Make treeview widget. """
+    """Make treeview widget."""
 
     def __init__(self, parent):
         super().__init__()
@@ -18,38 +17,44 @@ class Treeview(ttk.Treeview):
         self.tree_frm = ttk.Frame(self.parent)
         self.tree_frm.pack(fill="both", expand=True)
 
-        columns = (_("Old name"),
-                   _("New name"),
-                   _("Size"),
-                   _("Date modified"),
-                   _("Date created"),
-                   _("Location")
-                   )
+        columns = (
+            _("Old name"),
+            _("New name"),
+            _("Size"),
+            _("Date modified"),
+            _("Date created"),
+            _("Location"),
+        )
 
         self.style = ttk.Style()
 
         # Fix background and foreground color display
-        self.style.map("Treeview", foreground=self.__fixed_map("foreground"),
-                       background=self.__fixed_map("background"))
+        self.style.map(
+            "Treeview",
+            foreground=self.__fixed_map("foreground"),
+            background=self.__fixed_map("background"),
+        )
 
         # Remove the borders
         if sys.platform == "win32":
-            self.style.layout(
-                "Treeview", [("Treeview.treearea", {"sticky": "nswe"})])
+            self.style.layout("Treeview", [("Treeview.treearea", {"sticky": "nswe"})])
 
         self.tree = ttk.Treeview(
-            self.tree_frm, show="headings", column=columns, selectmode="none")
+            self.tree_frm, show="headings", columns=columns, selectmode="none"
+        )
 
         self.tree.tag_configure("ERR", foreground="#d63031")
 
         # Scrollbars
         horizontal_scrollbar = ttk.Scrollbar(
-            self.tree_frm, orient="horizontal", command=self.tree.xview)
+            self.tree_frm, orient="horizontal", command=self.tree.xview
+        )
         horizontal_scrollbar.pack(side="bottom", fill="x")
         self.tree.configure(xscrollcommand=horizontal_scrollbar.set)
 
         vertical_scrollbar = ttk.Scrollbar(
-            self.tree_frm, orient="vertical", command=self.tree.yview)
+            self.tree_frm, orient="vertical", command=self.tree.yview
+        )
         vertical_scrollbar.pack(side="right", fill="y")
         self.tree.configure(yscrollcommand=vertical_scrollbar.set)
 
@@ -74,5 +79,8 @@ class Treeview(ttk.Treeview):
 
         # style.map() returns an empty list for missing options, so this
         # should be future-safe.
-        return [elm for elm in self.style.map('Treeview', query_opt=option)
-                if elm[:2] != ('!disabled', '!selected')]
+        return [
+            elm
+            for elm in self.style.map("Treeview", query_opt=option)
+            if elm[:2] != ("!disabled", "!selected")
+        ]

@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-# flake8: noqa: F821
+from views import translation
 
+_ = translation.gettext
 
 OPTIONS_DICT = {
     "[n]": _("Name [n]"),
@@ -41,9 +40,6 @@ ARGUMENTS_DICT = {
     8: _("First letter of each word uppercase"),
 }
 
-WINDOWS_PROHIBITED_CHAR = [
-    "<", ">", "\\", "/", ":", "*", "?", "|", "\""
-]
+WINDOWS_PROHIBITED_CHAR = ["<", ">", "\\", "/", ":", "*", "?", "|", '"']
 
-ALERT_CHAR = _(
-    "A file name cannot contain the following characters: \ /: *? \"<> |")
+ALERT_CHAR = _('A file name cannot contain the following characters: \\ /: *? "<> |')

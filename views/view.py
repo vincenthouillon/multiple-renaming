@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-
 """Called from multiple_renaming.py"""
 
 import sys
@@ -130,8 +127,9 @@ class View(Tk):
             if char in name_modified:
                 self.statusbar.var_alert.set(
                     ALERT_CHAR)
-                PlaySound("SystemAsterisk", SND_ASYNC)
-                self.activate_button(False)
+                if sys.platform == "win32":
+                    PlaySound("SystemAsterisk", SND_ASYNC)
+                self.activate_button("disabled")
                 break
             else:
                 self.statusbar.var_alert.set("")
@@ -149,7 +147,7 @@ class View(Tk):
         _list = [d["new_name"] for d in data]
 
         if not _list:
-            self.activate_button(False)
+            self.activate_button("disabled")
 
         _duplicates = set([fnane for fnane in _list if _list.count(fnane) > 1])
 
@@ -157,9 +155,9 @@ class View(Tk):
             if columns["new_name"] in _duplicates:
                 self.treeview.tree.insert(
                     "", "end", values=list(columns.values()),
-                    tag="ERR"
+                    tags="ERR"
                 )
-                self.activate_button(False)
+                self.activate_button("disabled")
             else:
                 self.treeview.tree.insert(
                     "", "end", values=list(columns.values())
@@ -179,7 +177,7 @@ class View(Tk):
         """Filled the options menu."""
         entry = self.params.filename_entry
         for key, value in OPTIONS_DICT.items():
-            self.params.menu_btn.menu.add_command(
+            self.params.menu.add_command(
                 label=value,
                 command=lambda k=key: entry.insert(entry.index("insert"), k)
             )

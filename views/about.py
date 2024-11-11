@@ -1,8 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-# pylint: disable=undefined-variable
-# flake8: noqa: F821
-
 """Called from viewq.view."""
 
 import sys
@@ -10,6 +5,9 @@ import webbrowser
 from tkinter import Frame, Label, PhotoImage, Toplevel, ttk
 
 from utils import versions
+from views import translation
+
+_ = translation.gettext
 
 
 class About:
@@ -44,22 +42,20 @@ class About:
         title = Label(frame, text="Multiple Renaming", font=("sans-serif", 16))
         title.pack()
 
-        subtitle = Label(frame, text="File renaming utility.",
-                         font=("sans-serif", 12))
+        subtitle = Label(frame, text="File renaming utility.", font=("sans-serif", 12))
         subtitle.pack()
 
         version_text = f"Version {versions.__version__}"
         version = Label(frame, text=version_text)
         version.pack()
 
-        link_lbl = Label(
-            frame, text="Website", fg="blue", cursor="hand2")
+        link_lbl = Label(frame, text="Website", fg="blue", cursor="hand2")
         link_lbl.pack()
-        link_lbl.bind(
-            "<Button-1>", lambda e: webbrowser.open_new(versions.__website__))
+        link_lbl.bind("<Button-1>", lambda e: webbrowser.open_new(versions.__website__))
 
         ttk.Separator(frame, orient="horizontal").pack(fill="x", pady=10)
 
-        _license = Label(frame, text="Copyright© 2020 - Vincent Houillon",
-                         font=("sans-serif", 8))
+        _license = Label(
+            frame, text="Copyright© 2020 - Vincent Houillon", font=("sans-serif", 8)
+        )
         _license.pack()
