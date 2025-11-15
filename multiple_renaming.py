@@ -11,7 +11,7 @@ import os
 import sys
 from tkinter.filedialog import askopenfilenames
 
-from _datetime import datetime
+from datetime import datetime
 from utils.parser import Parser
 from utils.utils import arguments_parsing, get_human_readable_size
 from views.view import View

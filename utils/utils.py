@@ -5,7 +5,7 @@ import os
 import sys
 from tkinter.messagebox import showinfo
 
-from _datetime import datetime
+from datetime import datetime
 
 from views import translation
 
